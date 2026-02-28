@@ -171,3 +171,47 @@ h3 {
   /* Row 6 gallery: 6 across on desktop (more than 4 items) */
   .thumb { flex: 1 1 calc(16.666% - 1rem); }
 }
+
+/* Footer: image source credits */
+.site-footer {
+  margin-top: 1.5rem;
+  margin-left: 4%;
+  width: 92%;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+}
+
+.site-footer h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.footer-note {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.source-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.source-list li {
+  margin-bottom: 0.35rem;
+  word-break: break-word; /* prevents long URLs from blowing out layout */
+}
+
+/* Make it compact on wider screens */
+@media only screen and (min-width: 768px) {
+  .source-list {
+    columns: 2;
+    column-gap: 2rem;
+  }
+  .source-list li {
+    break-inside: avoid;
+  }
+}
