@@ -1,3 +1,32 @@
+/*
+  ============================================================
+  Project 2 Flexbox Layout Notes (Mobile-first)
+  ============================================================
+
+  Core idea:
+  - `.row` is the FLEX CONTAINER (display:flex).
+  - Cards are FLEX ITEMS and get their width from the `col-*` classes via `flex: 0 0 <basis>`.
+  - Responsive reflow (wrapping) AND item reordering (Row 5 requirement).
+  - Flexbox handles both cleanly with `flex-wrap` and `order`.
+  - Base (mobile): single-column stack (easy reading + predictable)
+  - >= 480px (tablet): mostly 2-up, with a few row-specific overrides to match the provided tablet screenshot
+  - >= 768px (desktop): matches the desktop screenshot layout
+
+  Column math / spacing:
+  - Consistent gutter using `margin-left: 4%` on each card.
+  - The container width for each card is based on the remaining 96% (100% - 4% gutter).
+    Examples:
+      * Full width: 92%  (one card + 4% left gutter)
+      * Two-up:     44%  (44 + 4 + 44 + 4 = 96)
+      * Four-up:    20%  (20 + 4 repeated = 96)
+
+  Row-specific requirements:
+  - Row 3 (desktop): 1-column + 3-column  (col-1 + col-3)
+  - Row 4 (desktop): full width           (col-4)
+  - Row 5: reorder on resize using `order`
+  - Row 6: unique row = nested flex thumbnail gallery (supports "extra" images)
+*/
+
 /* Border box declaration 
 https://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
 html {
@@ -35,15 +64,22 @@ article img {
   max-width: 225px;
 }
 
-/* grid system -- mobile first! */
-/* flex container */
+/* ============================================================
+   Flex grid system (mobile-first)
+   - `.row` creates a flex formatting context.
+   - `flex-flow: row wrap` means: place items in a row, but allow wrapping onto new lines.
+   ============================================================ */
 .row {
   display: flex;
   flex-flow: row wrap;
   margin-top: 1.25rem;
 }
 
-/* flex items */
+/* Flex items:
+   - Attribute selector grabs col-1/2/3/4 without repeating rules.
+   - `flex: 0 0 92%` on mobile means: do not grow, do not shrink, take ~full width.
+   - `margin-left: 4%` is the gutter; consistent across all breakpoints.
+*/
 [class*="col-"] {
   margin-left: 4%;
   flex: 0 0 92%;
@@ -55,18 +91,26 @@ h3 {
   margin: 0 0 0.5rem 0;
 }
 
-/* Background colors (so you can visually confirm column spans) */
+/* Column span classes:
+   Classes do 2 jobs:
+   1) visual debugging (background colors so you can see the layout)
+   2) responsive width control via `flex-basis` (set in media queries)
+*/
 .col-1 { background-color: #A3CDD9; }   /* light blue */
 .col-2 { background-color: #FFFCE6; }   /* light cream */
 
-/* NEW for project requirements */
+/* New Content */
 .col-3 { background-color: #F2D049; }   /* warm yellow (3-column span) */
 .col-4 { background-color: #C9C0B7; }   /* gray/taupe (full width) */
 
 /* Row 6 unique cards (different color + nested flex) */
 .col-feature { background-color: #E6F4EA; } /* soft green */
 
-/* Row 5: order change requirement (mobile-first: center feature first) */
+/* ============================================================
+   Row 5: Property used: `order` (Flexbox)
+   - On mobile/tablet: featured center card is order:1 so it appears first when stacked.
+   - On desktop: restore left-center-right by setting explicit order values again.
+   ============================================================ */
 .row5-center { order: 1; }
 .row5-left   { order: 2; }
 .row5-right  { order: 3; }
@@ -74,7 +118,15 @@ h3 {
 /* Row 6 unique container (thumbnail gallery) */
 .col-gallery { background-color: #E6F4EA; } /* soft green */
 
-/* Row 6: thumbnail gallery (nested flex, supports MANY images) */
+/* ============================================================
+   Row 6 (unique row): Nested flex thumbnail gallery:
+   - Flex container inside a flex item (`.thumbs` inside `.col-gallery`)
+   - Supports more than 4 items per row on desktop (6 across)
+   Flex properties used:
+   - `flex-wrap: wrap` to create a responsive grid without media-query-heavy markup changes.
+   - `justify-content: space-between` to distribute thumbnails across the row.
+   - `gap` for consistent spacing without manual margins.
+   ============================================================ */
 .thumbs {
   display: flex;
   flex-wrap: wrap;
@@ -172,7 +224,12 @@ h3 {
   .thumb { flex: 1 1 calc(16.666% - 1rem); }
 }
 
-/* Footer: image source credits */
+/* ============================================================
+   Footer: image source credits
+   - A semantic footer keeps credits for images grouped 
+   - `columns: 2` on desktop makes long credit lists readable without huge vertical scrolling.
+   - `word-break: break-word` prevents long URLs from overflowing the layout.
+   ============================================================ */
 .site-footer {
   margin-top: 1.5rem;
   margin-left: 4%;
@@ -214,4 +271,194 @@ h3 {
   .source-list li {
     break-inside: avoid;
   }
+}
+
+/* ============================================================
+   NOTE: Legacy header styles
+   - The project initially used a static banner image (`.site-banner`) and separate `.site-title/.site-tagline`.
+   - The current build uses the CSS-only hero collage instead (`.hero-*`).
+   - Keeping these styles doesn't break anything, but are kept as a reference for the original layout
+   ============================================================ */
+/* ===== Site header ===== */
+.site-header {
+  width: 92%;
+  margin-left: 4%;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.site-title {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.15;
+}
+
+.site-tagline {
+  margin: 0.25rem 0 0;
+  font-size: 1.05rem;
+  font-style: italic;
+}
+
+.site-banner {
+  margin-top: 0.75rem;
+}
+
+/* Override generic image sizing rules for the banner */
+.site-banner img {
+  width: 100%;
+  height: auto;
+  max-width: none;
+  display: block;
+  border-radius: 10px;
+}
+
+/* Desktop: put title + tagline on one line */
+@media only screen and (min-width: 768px) {
+  .site-header-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .site-tagline {
+    margin: 0;
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+/* ===== Header hero (gallery collage) ===== */
+.site-header {
+  width: 92%;
+  margin-left: 4%;
+  margin-top: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.hero {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 220px;
+  background-color: #111; /* fallback if images fail */
+}
+
+/* ===== Header hero (gallery collage) ===== */
+.hero {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 220px;
+  background-color: #111;
+}
+
+/* ============================================================
+   Header hero: CSS-only "gallery banner"
+   - HTML defines 6 empty `.hero-tile` spans.
+   - Inline style on the hero section defines `--hero-1..--hero-6` URLs.
+   - CSS maps each tile to a background-image variable.
+
+   Mobile behavior (default):
+   - `.hero-tiles` is a horizontal flex strip (`flex-wrap: nowrap`) with `overflow-x:auto`.
+   - `scroll-snap-type` makes the tiles snap cleanly as you swipe.
+   ============================================================ */
+/* MOBILE (default): horizontal scroll film strip */
+.hero-tiles {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;          /* Firefox */
+}
+.hero-tiles::-webkit-scrollbar {  /* Chrome/Safari */
+  display: none;
+}
+
+.hero-tile {
+  flex: 0 0 70%;                  /* tile width; tweak (60–85%) to taste */
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.08) contrast(1.05);
+  scroll-snap-align: start;
+}
+
+/* tiles are “gallery-like” */
+.hero-tile + .hero-tile {
+  box-shadow: inset 6px 0 0 rgba(0,0,0,0.25);
+}
+
+/* keep tile-to-image mapping */
+.hero-tile:nth-child(1) { background-image: var(--hero-1); }
+.hero-tile:nth-child(2) { background-image: var(--hero-2); }
+.hero-tile:nth-child(3) { background-image: var(--hero-3); }
+.hero-tile:nth-child(4) { background-image: var(--hero-4); }
+.hero-tile:nth-child(5) { background-image: var(--hero-5); }
+.hero-tile:nth-child(6) { background-image: var(--hero-6); }
+
+/* dark overlay for readable text */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.60), rgba(0,0,0,0.20));
+  z-index: 0;
+}
+
+/* overlay text */
+.hero-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.hero-title {
+  margin: 0;
+  color: #662020;
+  font-size: 1.9rem;
+  line-height: 1.1;
+  letter-spacing: 0.5px;
+}
+
+.hero-tagline {
+  margin: 0.35rem 0 0;
+  color: #662020;
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+/* Tablet+ behavior:
+   - Switch from the swipeable film strip to a static collage using CSS Grid
+   - "Banner-like" on larger screens and matches the tablet screenshot
+*/
+/* tablet+ : switch to non-scroll collage */
+@media only screen and (min-width: 480px) {
+  .hero-tiles {
+    display: grid;
+    overflow: hidden;
+    scroll-snap-type: none;
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .hero-tile {
+    flex: initial;
+    scroll-snap-align: none;
+    height: auto;
+  }
+
+  .hero { min-height: 240px; }
+}
+
+/* desktop */
+@media only screen and (min-width: 768px) {
+  .hero { min-height: 280px; }
+  .hero-title { font-size: 2.25rem; }
 }
