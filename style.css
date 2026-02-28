@@ -3,8 +3,7 @@ https://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
 html {
   box-sizing: border-box;
 }
-/* inherit border-box on all elements in the universe and before and after
- */
+/* inherit border-box on all elements in the universe and before and after */
 *, 
 *:before, 
 *:after {
@@ -12,74 +11,163 @@ html {
 }
 
 body {
-	font-family: Arial, Geneva, sans-serif;
-}
-a {
-	color: #2772B0;
-}
-.wrapper {
-	width: 97%;
-	max-width: 1200px;
-	margin: 0 auto;
-	float: none;
-	background-color: #fff;
+  font-family: Arial, Geneva, sans-serif;
+  margin: 0;
 }
 
-div img {
-	width: 100%;
-	max-width: 225px; 
+a {
+  color: #2772B0;
+}
+
+.wrapper {
+  width: 97%;
+  max-width: 1200px;
+  margin: 0 auto;
+  float: none;
+  background-color: #fff;
+  padding-bottom: 2rem;
+}
+
+/* keep images consistent inside cards */
+article img {
+  width: 100%;
+  height: auto;
+  max-width: 225px;
 }
 
 /* grid system -- mobile first! */
-/* flex contatiner */
-
+/* flex container */
 .row {
-	display: flex;
-	flex-flow: row wrap;
+  display: flex;
+  flex-flow: row wrap;
+  margin-top: 1.25rem;
 }
 
-/* attribute selector to give some margin between columns and apply styles to flex items */
-
+/* flex items */
 [class*="col-"] {
-	margin-left: 4%;
-	flex: 0 0 92%;
+  margin-left: 4%;
+  flex: 0 0 92%;
+  padding: 0.75rem;
+  border-radius: 10px;
 }
 
-/* Add background colors to see how much space each column is taking */
-
-.col-1 {
-	background-color: #A3CDD9;
+h3 {
+  margin: 0 0 0.5rem 0;
 }
 
-.col-2 {
-	background-color: #FFFCE6;
+/* Background colors (so you can visually confirm column spans) */
+.col-1 { background-color: #A3CDD9; }   /* light blue */
+.col-2 { background-color: #FFFCE6; }   /* light cream */
+
+/* NEW for project requirements */
+.col-3 { background-color: #F2D049; }   /* warm yellow (3-column span) */
+.col-4 { background-color: #C9C0B7; }   /* gray/taupe (full width) */
+
+/* Row 6 unique cards (different color + nested flex) */
+.col-feature { background-color: #E6F4EA; } /* soft green */
+
+/* Row 5: order change requirement (mobile-first: center feature first) */
+.row5-center { order: 1; }
+.row5-left   { order: 2; }
+.row5-right  { order: 3; }
+
+/* Row 6 unique container (thumbnail gallery) */
+.col-gallery { background-color: #E6F4EA; } /* soft green */
+
+/* Row 6: thumbnail gallery (nested flex, supports MANY images) */
+.thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between; /* shows off another flex property */
+  margin-top: 0.75rem;
+}
+
+.thumb {
+  flex: 1 1 calc(50% - 1rem); /* mobile: 2 across */
+  text-decoration: none;
+  color: inherit;
+}
+
+.thumb img {
+  width: 100%;
+  max-width: none; /* override global max-width for thumbnails */
+  border-radius: 10px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.thumb span {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+}
+
+/* Row 6 nested flex media object */
+.media {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.media-body p {
+  margin: 0 0 0.5rem 0;
 }
 
 /* Tablet Landscape Screen Sizes */
 @media only screen and (min-width: 480px)  {
-	
+
   .col-1,
   .col-2 {
-		flex: 0 0 44%;
-	}
-  
-  
+    flex: 0 0 44%;
+  }
+  /* Row 6 gallery: 3 across on tablet */
+  .thumb { flex: 1 1 calc(33.333% - 1rem); }
+  /* default behavior for span classes on tablet */
+  .col-3,
+  .col-4,
+  .col-feature {
+    flex: 0 0 92%;
+  }
 
+  /* Row 3 (tablet): stack the 1-col + 3-col items */
+  .row--third .col-1 {
+    flex: 0 0 92%;
+  }
 
+  /* Row 5 (tablet): center feature full width, then two side items */
+  .row--fifth .col-2 {
+    flex: 0 0 92%;
+  }
 
+  /* Row 6: show media (image + text) side-by-side */
+  .media {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 }
+
 /* Desktop screen Sizes */
 @media only screen and (min-width: 768px) {
-  
-  
- 	.col-1 {
-		flex: 0 0 20%;
-	}
-  
-  
-  
-	.col-2 {
-		flex: 0 0 44%;
-	}
 
+  .col-1 { flex: 0 0 20%; }
+  .col-2 { flex: 0 0 44%; }
+
+  /* Desktop span rules */
+  .col-3 { flex: 0 0 68%; }  /* 3-column span */
+  .col-4 { flex: 0 0 92%; }  /* full width */
+
+  /* Row 5 (desktop): restore left-center-right ordering */
+  .row5-left   { order: 1; }
+  .row5-center { order: 2; }
+  .row5-right  { order: 3; }
+
+  /* Row 6 unique: wide + narrow using flex-grow */
+  .row--sixth .col-feature {
+    flex: 1 1 44%;
+  }
+  .row--sixth .col-feature.is-wide {
+    flex: 2 1 44%;
+  }
+  /* Row 6 gallery: 6 across on desktop (more than 4 items) */
+  .thumb { flex: 1 1 calc(16.666% - 1rem); }
 }

@@ -3,66 +3,171 @@
 
   <head>
     <meta charset="UTF-8">
-    <title>Doggos</title>
+    <title>Thinking About Theropods</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="style.css">
   </head>
 
-  <body>
+  <!--
+    changed to dinosaur-bird type animal and flying dinosaurs web page, for people interested in the evolution of birds 
+    Focus: Each row to have two-three examples of the three Mesozoic period - 2-3 from Triassic, 
+    2-3 from Jurassic, 2-3 from Cretaceous
+    animals included: Triassic - Protoavis, Avicranium Renestoi, pterosaurs
+    Jurassic - Archaeopteryx Lithographicia, Compsognathus, pterosaurs
+    Cretaceous - Dromaeosuridae and Oviraptorosaurs, pterosaurs
+
+    Layout requirements:
+    Row 3 (Desktop): 1-column item + 3-column item
+    Row 4 (Desktop): 4-column single item (full width)
+    Row 5 (Desktop): 1-column + 2-column + 1-column
+      - NOTE: order changes on smaller screens using the flexbox `order` property
+    Row 6: unique row using other flex properties (nested flex + flex-grow)
+  -->
+
+<body>
     <div class="wrapper">
+
       <!-- row 1, 4 individual boxes -->
       <div class="row">
         <article class="col-1">
-          <h3>Boomer</h3>
-          <img src="https://placedog.net/250/166/?id=5" alt="Boomer doggo.">
-          <p>Speak squeak toy stay tug bark take it dachshund leave it maltese. Lab poodle dog house puppies shake bite pomeranian spin, roll over poodle milk bone leave it. Puppies shake play dead maltese kibbles roll over collar vet german shephard.</p>
-          <p><a href="https://www.laanimalservices.com/adopt/" target="_blank">Read more &gt;&gt;</a></p>
+          <h3>Protoavis</h3>
+          <img src="https://placehold.co/250x166?text=Protoavis" alt="Placeholder image for Protoavis.">
+          <p>Triassic discussion starter: what counts as “bird-like,” and what evidence survives?</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
+
         <article class="col-1">
-          <h3>Charlie</h3>
-          <img src="https://placedog.net/250/166/?id=6" alt="Charlie doggo">
-          <p>Tail poodle peanut butter puppies dog house, dog bone dog growl shake chase tail lap dog doberman pinscher poodle. Bulldog husky stand come collar greyhound collar milk bone. Paw leash dog bowl fetch bring it rottweiler english mastiff shake, poodle yorkshire terrier st bernard peanut butter.</p>
-          <p><a href="https://www.laanimalservices.com/adopt/" target="_blank">Read more &gt;&gt;</a></p>
+          <h3>Coelophysis</h3>
+          <img src="https://placehold.co/250x166?text=Coelophysis" alt="Placeholder image for Coelophysis.">
+          <p>Small-bodied theropods help frame the lightweight builds that later enable flight traits.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
+
         <article class="col-1">
-          <h3>Pax</h3>
-          <img src="https://placedog.net/250/166/?id=7" alt="Pax doggo">
-          <p>Leave it yorkshire terrier play dead leash down collar k9 spin poodle. German shephard heel leash husky bulldog dog k9. Sit come puppies leash leash collar leash stand kibbles, sit leash come sit pretty bark.</p>
-          <p><a href="https://www.laanimalservices.com/adopt/" target="_blank">Read more &gt;&gt;</a></p>
+          <h3>Triassic Pterosaur</h3>
+          <img src="https://placehold.co/250x166?text=Pterosaur" alt="Placeholder image for a Triassic pterosaur.">
+          <p>Pterosaurs aren’t dinosaurs, but they’re key context for Mesozoic flight ecosystems.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
+
         <article class="col-1">
-          <h3>Scout</h3>
-          <img src="https://placedog.net/250/166/?id=8" alt="Scout doggo">
-          <p>K9 squeak toy k9 dog bowl milk bone sit pretty squirrel sit. Jump dog bowl shake bring it leap Morkie growl take it, fetch puppy bring it vet. Rottweiler bulldog play dead tennis ball, dog bone lab puppies take it peanut butter tail.</p>
-          <p><a href="https://www.laanimalservices.com/adopt/" target="_blank">Read more &gt;&gt;</a></p>
+          <h3>Avicranium</h3>
+          <img src="https://placehold.co/250x166?text=Avicranium" alt="Placeholder image for Avicranium.">
+          <p>Odd skulls and odd niches—great for explaining convergence across lineages.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
       </div>
-      <!-- row 2, 2 boxes spanning 2 rows -->
+
+      <!-- row 2, 2 boxes spanning 2 columns each on desktop -->
       <div class="row">
         <article class="col-2">
-          <h3>Yoda</h3>
-          <img src="https://placedog.net/250/166/?id=9" alt="Yoda doggo">
-          <p>Dachshund german shephard doberman pinscher leash lab dog bone dog bone roll over dachshund. Chihuahua chew toy down great dance english mastiff poodle tug dog toy greyhound. Doberman pinscher tug dog house poodle shih tzu sit pretty chew toy stay, bell pug shake dog house poodle k9.</p>
-          <p><a href="https://www.laanimalservices.com/adopt/" target="_blank">Read more &gt;&gt;</a></p>
+          <h3>Archaeopteryx</h3>
+          <img src="https://placehold.co/250x166?text=Archaeopteryx" alt="Placeholder image for Archaeopteryx.">
+          <p>Jurassic “icon fossil.” Great anchor point for feathers, wings, and early bird-like anatomy.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
+
         <article class="col-2">
-          <h3>Whiskey</h3>
-          <img src="https://placedog.net/250/166/?id=10" alt="Whiskey doggo">
-          <p>English mastiff play dead english mastiff, dog bulldog bulldog release heel bell bark bulldog. Poodle collar doberman pinscher dog toy dog toy come puppy leave it chow chow. Down husky dog toy, shake fetch greyhound shake poodle chihuahua puppies.</p>
-          <p><a href="https://www.laanimalservices.com/adopt/" target="_blank">Read more &gt;&gt;</a></p>
+          <h3>Compsognathus</h3>
+          <img src="https://placehold.co/250x166?text=Compsognathus" alt="Placeholder image for Compsognathus.">
+          <p>Compact theropod anatomy pairs nicely with discussions on balance, agility, and body plan.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
       </div>
-      <!-- row 3: narrow left column, wide right/content column -->
-      <div class="row">
 
-      </div>
-      <!-- row 4: one column -->
-      <div class="row">
+      <!-- row 3: Desktop = 1-column wide item + 3-column wide item -->
+      <div class="row row--third">
+        <article class="col-1">
+          <h3>Triassic Snapshot</h3>
+          <img src="https://placehold.co/250x166?text=Triassic" alt="Placeholder image for a Triassic snapshot.">
+          <p>Timeline sidebar: continents, climate, and what “early” means in the fossil record.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
 
+        <article class="col-3">
+          <h3>Flight Experiments</h3>
+          <img src="https://placehold.co/250x166?text=Flight+Traits" alt="Placeholder image for flight traits.">
+          <p>Feature space: feathers, hollow bones, forelimb mobility, and competing ideas for how flight evolved.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
       </div>
-      <!-- row 5, 1-2-1 individual boxes -->
-      <div class="row">
+
+      <!-- row 4: Desktop = full-width item -->
+      <div class="row row--fourth">
+        <article class="col-4">
+          <h3>Mesozoic Timeline</h3>
+          <img src="https://placehold.co/250x166?text=Timeline" alt="Placeholder image for a Mesozoic timeline.">
+          <p>Full-width callout space for a hero banner, newsletter signup, or “top 5 facts” strip.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
+      </div>
+
+      <!-- row 5: Desktop = 1-column + 2-column + 1-column
+           NOTE: order changes on smaller screens using CSS flex `order`. -->
+      <div class="row row--fifth">
+        <article class="col-1 row5-left">
+          <h3>Oviraptorosaurs</h3>
+          <img src="https://placehold.co/250x166?text=Oviraptor" alt="Placeholder image for an oviraptorosaur.">
+          <p>Short card: beaks, crests, nests, and the “weird but successful” side of theropod evolution.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
+
+        <article class="col-2 row5-center">
+          <h3>Featured: Dromaeosaurs</h3>
+          <img src="https://placehold.co/250x166?text=Dromaeosaur" alt="Placeholder image for a dromaeosaur.">
+          <p>Center feature: highlight a Cretaceous group and leave room for a larger image + longer summary.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
+
+        <article class="col-1 row5-right">
+          <h3>Pterosaur Giants</h3>
+          <img src="https://placehold.co/250x166?text=Giant+Pterosaur" alt="Placeholder image for a giant pterosaur.">
+          <p>Short card: a non-dinosaur flight line that peaks late—perfect comparison against birds.</p>
+          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
+      </div>
+
+     <!-- row 6: UNIQUE ROW (flex thumbnail gallery; supports "extra" images) -->
+      <div class="row row--sixth">
+        <article class="col-4 col-gallery">
+          <h3>Gallery: Feathered Flyers</h3>
+          <p>Extra image strip (add/remove thumbnails as needed). On desktop this shows 6 thumbnails across (more than 4 items).</p>
+
+          <div class="thumbs" aria-label="Theropod gallery thumbnails">
+            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
+              <img src="https://placehold.co/250x166?text=Microraptor" alt="Placeholder image for Microraptor.">
+              <span>Microraptor</span>
+            </a>
+
+            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
+              <img src="https://placehold.co/250x166?text=Anchiornis" alt="Placeholder image for Anchiornis.">
+              <span>Anchiornis</span>
+            </a>
+
+            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
+              <img src="https://placehold.co/250x166?text=Confuciusornis" alt="Placeholder image for Confuciusornis.">
+              <span>Confuciusornis</span>
+            </a>
+
+            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
+              <img src="https://placehold.co/250x166?text=Sinosauropteryx" alt="Placeholder image for Sinosauropteryx.">
+              <span>Sinosauropteryx</span>
+            </a>
+
+            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
+              <img src="https://placehold.co/250x166?text=Yi+qi" alt="Placeholder image for Yi qi.">
+              <span>Yi qi</span>
+            </a>
+
+            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
+              <img src="https://placehold.co/250x166?text=Quetzalcoatlus" alt="Placeholder image for Quetzalcoatlus.">
+              <span>Quetzalcoatlus</span>
+            </a>
+          </div>
+
+          <p><a href="#" target="_blank" rel="noopener noreferrer">View full gallery &gt;&gt;</a></p>
+        </article>
       </div>
     </div>
   </body>
