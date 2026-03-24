@@ -1,274 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Thinking About Theropods</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="style.css">
-  </head>
-
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thinking About Theropods - Project 3 Grid Rewrite</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
   <!--
+    Project 3: CSS Grid rewrite
 
-    Project 2: Changed to dinosaur-bird type animal and flying dinosaurs web page, for people interested in the evolution of birds 
-    Focus: Each row to have two-three examples of the three Mesozoic period - 2-3 from Triassic, 
-    2-3 from Jurassic, 2-3 from Cretaceous, or more if necessary to fill rows.
-    animals included: Triassic - Protoavis, Avicranium Renestoi, pterosaurs
-    Jurassic - Archaeopteryx Lithographicia, Compsognathus, pterosaurs
-    Cretaceous - Dromaeosuridae and Oviraptorosaurs, pterosaurs
+    This version rebuilds the old flexbox layout with CSS Grid.
 
-    Layout requirements:
-    Row 3 (Desktop): 1-column item + 3-column item
-    Row 4 (Desktop): 4-column single item (full width)
-    Row 5 (Desktop): 1-column + 2-column + 1-column
-      - NOTE: order changes on smaller screens using the flexbox `order` property
-    Row 6: unique row using other flex properties (nested flex + flex-grow)
+    Grid strategy used in this file:
+    1) Hero strip, Row 1, and the thumbnail gallery use auto-placement.
+       - Their content is repetitive, so the browser can place the items for us.
+       - That makes them good places to demonstrate `grid-auto-flow`.
+
+    2) Rows 2, 3, 4, 5, and the bibliography footer use named layout maps.
+       - These sections have more intentional composition and hierarchy.
+       - That makes them better candidates for `grid-template-areas`.
+
+    3) The content topic stays focused on theropods, early birds, and other
+       Mesozoic fliers. Some aesthetic mods were done as well, beyond changing to Grid
   -->
 
-<body>
-    <div class="wrapper">
+  <div class="wrapper">
+    <header class="site-header">
       <!--
-        FLEXBOX LAYOUT OVERVIEW (mobile-first):
-        - Each section row is a `.row` flex container (display:flex; flex-wrap:wrap).
-        - Each card/article uses a span class (`col-1`, `col-2`, `col-3`, `col-4`) that sets its flex-basis at breakpoints.
-          4-column grid:
-            * col-1 = 1 column wide on desktop
-            * col-2 = 2 columns wide on desktop
-            * col-3 = 3 columns wide on desktop
-            * col-4 = full width (4 columns) on desktop
-        - Tablet breakpoint (>=480px): defaults to 2-up for col-1/col-2, while special rows override as needed
-        - Desktop breakpoint (>=768px): matches desktop screenshots (4-up, 2-up, 1+3, full, 1+2+1)
+        HERO STRIP
+        - The hero is still a visual collage, but it is now styled with Grid instead
+          of the earlier flex-based strip.
+        - The six empty spans are purely decorative tiles. Their images come from
+          CSS custom properties defined on the section below.
+        - Because background images are decorative and do not carry their own alt
+          text, the section uses role="img" plus aria-label.
       -->
+      <section
+        class="hero"
+        role="img"
+        aria-label="Collage banner of feathered dinosaurs and flying reptiles"
+        style="
+          --hero-1: url('https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg');
+          --hero-2: url('https://th-thumbnailer.cdn-si-edu.com/76ovcCD3T0g1btWrBEMm-ZDA7JU=/600x414/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/20110520083205Anchiornis-colors.jpg');
+          --hero-3: url('https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg');
+          --hero-4: url('https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000');
+          --hero-5: url('https://static01.nyt.com/images/2020/11/10/science/22JURASSIC/22JURASSIC-jumbo.jpg?quality=75&auto=webp');
+          --hero-6: url('https://assets.iflscience.com/assets/articleNo/76830/aImg/80290/sinomacrops-bondei-m.webp');
+        "
+      >
+        <div class="hero-tiles" aria-hidden="true">
+          <span class="hero-tile"></span>
+          <span class="hero-tile"></span>
+          <span class="hero-tile"></span>
+          <span class="hero-tile"></span>
+          <span class="hero-tile"></span>
+          <span class="hero-tile"></span>
+        </div>
 
-      <header class="site-header">
-        <section
-          class="hero"
-          role="img"
-          aria-label="Collage banner of feathered flyers"
-          style="
-            --hero-1: url('https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg');
-            --hero-2: url('https://th-thumbnailer.cdn-si-edu.com/76ovcCD3T0g1btWrBEMm-ZDA7JU=/600x414/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/20110520083205Anchiornis-colors.jpg');
-            --hero-3: url('https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg');
-            --hero-4: url('https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000');
-            --hero-5: url('https://static01.nyt.com/images/2020/11/10/science/22JURASSIC/22JURASSIC-jumbo.jpg?quality=75&auto=webp');
-            --hero-6: url('https://assets.iflscience.com/assets/articleNo/76830/aImg/80290/sinomacrops-bondei-m.webp');
-          "
-        >
-          <!--
-            Hero banner implementation notes:
-            - The 6 background images are passed in as CSS custom properties (--hero-1..--hero-6) on the <section>.
-              This keeps the hero reusable and avoids adding new image assets beyond the existing Row 6 sources.
-            - Uses<span> tiles instead of <img> so the banner can be controlled entirely in CSS (film-strip scroll on mobile,
-              fixed collage on tablet+)
-            - Because CSS backgrounds cannot have alt text, the <section> uses role="img" + aria-label for accessibility.
-          -->
-          <!-- purely visual collage tiles -->
-          <div class="hero-tiles" aria-hidden="true">
-            <span class="hero-tile"></span>
-            <span class="hero-tile"></span>
-            <span class="hero-tile"></span>
-            <span class="hero-tile"></span>
-            <span class="hero-tile"></span>
-            <span class="hero-tile"></span>
-          </div>
+        <div class="hero-content">
+          <p class="eyebrow">allaboutancientbirds</p>
+          <h1 class="hero-title">Flying in the Past</h1>
+          <p class="hero-tagline">Thinking about theropods, prototypes, and the long road to flight.</p>
+        </div>
+      </section>
+    </header>
 
-          <!-- overlay text -->
-          <div class="hero-content">
-            <h1 class="hero-title">Flying In The Past: </h1>
-            <p class="hero-tagline">Feathered Friends and Their Prototypes</p>
-          </div>
-        </section>
-      </header>
-
-
-
-      <!-- row 1, 4 individual boxes -->
-      <div class="row">
-        <article class="col-1">
-          <h3>Protoavis</h3>
-          <img src="https://www.dinosaurfact.net/Pictures/Protoavis3.jpg" alt="Placeholder image for Protoavis.">
-          <p>Triassic discussion starter: what counts as “bird-like,” and what evidence survives?</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+    <main>
+      <!--
+        ROW 1
+        - Four similarly sized cards.
+        - This row is intentionally repetitive, so it uses Grid auto-placement
+          instead of named areas.
+      -->
+      <section class="row row--first" aria-label="Triassic starter cards">
+        <article class="card card--soft">
+          <h2>Protoavis</h2>
+          <img src="https://www.dinosaurfact.net/Pictures/Protoavis3.jpg" alt="Illustration of Protoavis.">
+          <p>Triassic discussion starter: what counts as bird-like, and how much evidence survives from fragmentary remains?</p>
+          <p><a href="https://www.dinosaurfact.net/Pictures/Protoavis3.jpg" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
 
-        <article class="col-1">
-          <h3>Coelophysis</h3>
-          <img src="https://static.wikia.nocookie.net/dinosaurs/images/b/bd/Coelophysis_feathers.png" alt="Placeholder image for Coelophysis.">
-          <p>Small-bodied theropods help frame the lightweight builds that later enable flight traits.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        <article class="card card--accent">
+          <h2>Coelophysis</h2>
+          <img src="https://static.wikia.nocookie.net/dinosaurs/images/b/bd/Coelophysis_feathers.png/revision/latest/scale-to-width-down/1000?cb=20141109150637" alt="Illustration of Coelophysis.">
+          <p>Small-bodied theropods help frame the lightweight body plans that later make flight-related traits easier to discuss.</p>
+          <p><a href="https://static.wikia.nocookie.net/dinosaurs/images/b/bd/Coelophysis_feathers.png/revision/latest/scale-to-width-down/1000?cb=20141109150637" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
 
-        <article class="col-1">
-          <h3>Arcticodactylus</h3>
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfrwSUc6HOOaybEKPgp_xbxekxZH3voeSQRZZZMHjZDxMMIEp0fNuY2nKJWsACkCWSehpFqaN4sP6xOB-o_LhFpLkeaZrBdo1idMtRWd4A&s=10" alt="Placeholder image for a Triassic pterosaur.">
-          <p>Pterosaurs appeared as early as the Later Triassic, and while they aren’t dinosaurs, they’re key context for Mesozoic flight ecosystems as a flying reptile.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        <article class="card card--highlight">
+          <h2>Arcticodactylus</h2>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfrwSUc6HOOaybEKPgp_xbxekxZH3voeSQRZZZMHjZDxMMIEp0fNuY2nKJWsACkCWSehpFqaN4sP6xOB-o_LhFpLkeaZrBdo1idMtRWd4A&s=10" alt="Illustration of Arcticodactylus.">
+          <p>Pterosaurs are not dinosaurs, but they matter here because they show that Mesozoic skies were already crowded with flight experiments.</p>
+          <p><a href="https://www.instagram.com/p/CIqTHZ4luwd/" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
 
-        <article class="col-1">
-          <h3>Avicranium</h3>
-          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" alt="Placeholder image for Avicranium.">
-          <p>Odd skulls and odd niches—great for explaining convergence across lineages.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        <article class="card card--neutral">
+          <h2>Avicranium</h2>
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" alt="Illustration of Avicranium.">
+          <p>Odd skull form and uncertain relationships make this a useful example for talking about convergence and the limits of reconstruction.</p>
+          <p><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
-      </div>
+      </section>
 
-      <!-- row 2, 2 boxes spanning 2 columns each on desktop -->
-      <div class="row">
-        <article class="col-2">
-          <h3>Archaeopteryx</h3>
-          <img src="https://scitechdaily.com/images/Archaeopteryx-777x424.jpg" alt="Placeholder image for Archaeopteryx.">
-          <p>Jurassic “icon fossil.” Great anchor point for feathers, wings, and early bird-like anatomy.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
-        </article>
-
-        <article class="col-2">
-          <h3>Compsognathus</h3>
-          <img src="https://nixillustration.com/wp-content/uploads/2024/08/compsognathus-768x581.png" alt="Placeholder image for Compsognathus.">
-          <p>Compact theropod anatomy pairs nicely with discussions on balance, agility, and body plan.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
-        </article>
-      </div>
-
-      <!--  row 3: narrow left column, wide right/content column -->
-      <div class="row row--third">
-        <article class="col-1">
-          <h3>Triassic Snapshot</h3>
-          <img src="https://cdn.britannica.com/46/136146-050-AC38F468/Distribution-landmasses-regions-seas-ocean-basins-locations.jpg" alt="Placeholder image for a Triassic snapshot.">
-          <p>Timeline sidebar: continents, climate, and what “early” means in the fossil record.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+      <!--
+        ROW 2
+        - Two large cards with explicit left/right placement.
+        - Named areas make the section easy to read in CSS and easy to remap at
+          tablet and desktop sizes.
+      -->
+      <section class="row row--second" aria-label="Jurassic comparison cards">
+        <article class="card card--deep row2-left">
+          <h2>Archaeopteryx</h2>
+          <img src="https://scitechdaily.com/images/Archaeopteryx-777x424.jpg" alt="Illustration of Archaeopteryx.">
+          <p>Jurassic icon fossil. It anchors conversations about feathers, wings, claws, and the many transitional traits that students usually associate with “the first bird.”</p>
+          <p><a href="https://scitechdaily.com/images/Archaeopteryx-777x424.jpg" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
 
-        <article class="col-3">
-          <h3>Flight Experiments</h3>
-          <img src="https://scx2.b-cdn.net/gfx/news/hires/2023/hollow-bones-that-let-1.jpg" alt="Placeholder image for flight traits.">
-          <p>Feature space: feathers, hollow bones, forelimb mobility, and competing ideas for how flight evolved.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        <article class="card card--deep-alt row2-right">
+          <h2>Compsognathus</h2>
+          <img src="https://nixillustration.com/wp-content/uploads/2024/08/compsognathus-768x581.png" alt="Illustration of Compsognathus.">
+          <p>Compact theropod anatomy is a good bridge into balance, limb proportions, agility, and the small-bodied body plans that often show up in bird-origin discussions.</p>
+          <p><a href="https://nixillustration.com/wp-content/uploads/2024/08/compsognathus-768x581.png" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
-      </div>
+      </section>
 
-      <!-- row 4: one column -->
-      <div class="row row--fourth">
-        <article class="col-4">
-          <h3>Mesozoic Timeline</h3>
-          <img src="https://earthhow.com/wp-content/uploads/2018/08/Mesozoic-Era-Timeline-Dark-678x378.png" alt="Placeholder image for a Mesozoic timeline.">
-          <p>Full-width callout space for a hero banner, newsletter signup, or “top 5 facts” strip.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
-        </article>
-      </div>
-
-      <!-- row 5: 1-2-1 individual boxes
-           NOTE: order changes on smaller screens using CSS flex `order`.
-           on mobile/tablet, the featured (center) card appears first for visual hierarchy and easier scrolling
-           on desktop, restores the natural left-center-right reading order. -->
-      <div class="row row--fifth">
-        <article class="col-1 row5-left">
-          <h3>Oviraptorosaurs - A brief glimpse from Anzu</h3>
-          <img src="https://i.natgeofe.com/n/017cab5e-8660-4e3c-8093-90800a893f05/anzu-restoration.jpg?w=718&h=449" alt="Placeholder image for an oviraptorosaur.">
-          <p>Short card: beaks, crests, nests, and the “weird but successful” side of theropod evolution.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+      <!--
+        ROW 3
+        - A narrow support card plus a wider feature card.
+        - This is a good fit for grid-template-areas because the section is not a
+          generic repeating strip; it has a clear sidebar/feature composition.
+      -->
+      <section class="row row--third" aria-label="Triassic context and flight feature">
+        <article class="card card--soft row3-left">
+          <h2>Triassic Snapshot</h2>
+          <img src="https://cdn.britannica.com/46/136146-050-AC38F468/Distribution-landmasses-regions-seas-ocean-basins-locations.jpg" alt="Map showing Triassic landmasses and seas.">
+          <p>Context card for continents, climate, and the meaning of “early” in a fossil record that is incomplete and unevenly preserved.</p>
+          <p><a href="https://www.britannica.com/science/Triassic-Period" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
 
-        <article class="col-2 row5-center">
-          <h3>Featured: Dromaeosaurs</h3>
-          <img src="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" alt="Placeholder image for a dromaeosaur.">
-          <p>Center feature: highlight a Cretaceous group and leave room for a larger image + longer summary.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Speak with Sinornithosaurus - Read more &gt;&gt;</a></p>
+        <article class="card card--feature row3-right">
+          <h2>Flight Experiments</h2>
+          <img src="https://scx2.b-cdn.net/gfx/news/hires/2023/hollow-bones-that-let-1.jpg" alt="Illustration showing hollow-bone adaptation in dinosaurs.">
+          <p>Feature space for feathers, hollow bones, forelimb mobility, and competing theories about how controlled gliding and powered flight may have evolved.</p>
+          <p><a href="https://phys.org/news/2023-03-hollow-bones-dinosaurs-giants-evolved.html" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
+      </section>
+
+      <!--
+        ROW 4
+        - One full-width panel.
+        - This still uses a named area so the lower half of the page keeps one
+          consistent Grid language instead of mixing approaches.
+      -->
+      <section class="row row--fourth" aria-label="Timeline callout section">
+        <article class="card card--wide row4-main">
+          <h2>Mesozoic Timeline</h2>
+          <img src="https://earthhow.com/wp-content/uploads/2018/08/Mesozoic-Era-Timeline-Dark-678x378.png" alt="Graphic of the Mesozoic era timeline.">
+          <p>Full-width callout space for a large chronology panel. This section works well as a pacing break between the upper survey cards and the lower feature cards.</p>
+          <p><a href="https://earthhow.com/mesozoic-era/" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
+      </section>
+
+      <!--
+        ROW 5
+        - Three cards with stronger hierarchy: side / feature / side.
+        - On small screens the featured middle card moves to the top by changing
+          the template map, not by using flexbox order.
+      -->
+      <section class="row row--fifth" aria-label="Late Cretaceous comparison cards">
+        <article class="card card--soft row5-left">
+          <h2>Oviraptorosaurs</h2>
+          <img src="https://i.natgeofe.com/n/017cab5e-8660-4e3c-8093-90800a893f05/anzu-restoration.jpg?w=718&h=449" alt="Restoration of Anzu, an oviraptorosaur.">
+          <p>Beaks, crests, nesting behavior, and plenty of “weird but successful” anatomy make this a strong side card for late theropod diversity.</p>
+          <p><a href="https://www.nationalgeographic.com/science/article/mysterious-dinosaur-anzu-debuts" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
 
-        <article class="col-1 row5-right">
-          <h3>Pterosaur Giants</h3>
-          <img src="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" alt="Placeholder image for a giant pterosaur.">
-          <p>Short card: Kings of the sky before avians - a non-dinosaur flight line that peaks late—perfect comparison against birds.</p>
-          <p><a href="#" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        <article class="card card--deep row5-center">
+          <h2>Featured: Dromaeosaurs</h2>
+          <img src="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" alt="Illustration of a dromaeosaur.">
+          <p>Central feature area for a bigger image and a longer summary. It gives the lower half of the page a visual anchor and lets the evolutionary story feel less list-like.</p>
+          <p><a href="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
-      </div>
 
-     <!-- row 6: flex thumbnail gallery supports "extra" images -->
-      <div class="row row--sixth">
-        <article class="col-4 col-gallery">
-          <h3>Gallery: Feathered Flyers</h3>
-          <p>Extra image strip (add/remove thumbnails as needed). On desktop this shows 6 thumbnails across (more than 4 items).</p>
+        <article class="card card--highlight row5-right">
+          <h2>Pterosaur Giants</h2>
+          <img src="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" alt="Illustration of Quetzalcoatlus.">
+          <p>Large azhdarchids are a useful comparison point: they dominated the air late in the Mesozoic without being birds and without being dinosaurs.</p>
+          <p><a href="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+        </article>
+      </section>
 
-          <div class="thumbs" aria-label="Theropod gallery thumbnails">
-            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
-              <img src="https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg" alt="Placeholder image for Microraptor.">
+      <!--
+        ROW 6
+        - The gallery uses Grid auto-placement because it is a repeating collection
+          of thumbnails.
+        - New thumbnails can be added without rewriting named areas.
+      -->
+      <section class="row row--sixth" aria-label="Feathered flyer gallery">
+        <article class="card card--gallery gallery-shell">
+          <h2>Gallery: Feathered Flyers</h2>
+          <p>Extra image strip for examples that do not need their own large article card. The layout is scalable, so more thumbnails can be added without rebuilding the section.</p>
+
+          <div class="thumbs" aria-label="Theropod and pterosaur gallery thumbnails">
+            <a class="thumb" href="https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg" target="_blank" rel="noopener noreferrer">
+              <img src="https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg" alt="Microraptor illustration.">
               <span>Microraptor</span>
             </a>
 
-            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
-              <img src="https://th-thumbnailer.cdn-si-edu.com/76ovcCD3T0g1btWrBEMm-ZDA7JU=/600x414/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/20110520083205Anchiornis-colors.jpg" alt="Placeholder image for Anchiornis.">
+            <a class="thumb" href="https://www.smithsonianmag.com/science-nature/dinosaurs-now-in-living-color-63116194/" target="_blank" rel="noopener noreferrer">
+              <img src="https://th-thumbnailer.cdn-si-edu.com/76ovcCD3T0g1btWrBEMm-ZDA7JU=/600x414/filters:no_upscale()/https://tf-cmsv2-smithsonianmag-media.s3.amazonaws.com/filer/20110520083205Anchiornis-colors.jpg" alt="Anchiornis illustration.">
               <span>Anchiornis</span>
             </a>
 
-            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
-              <img src="https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg" alt="Placeholder image for Confuciusornis.">
+            <a class="thumb" href="https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg" alt="Confuciusornis illustration.">
               <span>Confuciusornis</span>
             </a>
 
-            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
-              <img src="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" alt="Placeholder image for Sinosauropteryx.">
+            <a class="thumb" href="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" target="_blank" rel="noopener noreferrer">
+              <img src="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" alt="Sinosauropteryx illustration.">
               <span>Sinosauropteryx</span>
             </a>
 
-            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
-              <img src="https://static01.nyt.com/images/2020/11/10/science/22JURASSIC/22JURASSIC-jumbo.jpg?quality=75&auto=webp" alt="Placeholder image for Yi qi.">
+            <a class="thumb" href="https://www.nytimes.com/2020/10/22/science/jurassic-dinosaur-yi-qi-flight.html" target="_blank" rel="noopener noreferrer">
+              <img src="https://static01.nyt.com/images/2020/11/10/science/22JURASSIC/22JURASSIC-jumbo.jpg?quality=75&auto=webp" alt="Yi qi illustration.">
               <span>Yi qi</span>
             </a>
 
-            <a class="thumb" href="#" target="_blank" rel="noopener noreferrer">
-              <img src="https://assets.iflscience.com/assets/articleNo/76830/aImg/80290/sinomacrops-bondei-m.webp" alt="Placeholder image for Anurognathids.">
+            <a class="thumb" href="https://www.iflscience.com/meet-the-anurognathidae-tiny-bat-like-ptersosaurs-with-huge-eyes-76830" target="_blank" rel="noopener noreferrer">
+              <img src="https://assets.iflscience.com/assets/articleNo/76830/aImg/80290/sinomacrops-bondei-m.webp" alt="Anurognathid illustration.">
               <span>Anurognathids</span>
             </a>
           </div>
 
-          <p><a href="#" target="_blank" rel="noopener noreferrer">View full gallery &gt;&gt;</a></p>
+          <p><a href="https://www.iflscience.com/meet-the-anurognathidae-tiny-bat-like-ptersosaurs-with-huge-eyes-76830" target="_blank" rel="noopener noreferrer">View full gallery &gt;&gt;</a></p>
         </article>
-      </div>
-    
+      </section>
+    </main>
 
-      <!--
-        Footer / citations:
-        - Uses an ordered list so the credits are scannable and the numbering stays stable
-        - Link text shows the domain name for readability
-        - full URL is preserved in href/title
-      -->
-      <footer class="site-footer">
-        <h2>Image Sources</h2>
-        <p class="footer-note">
-          The following links credit the original sources for images used on this page (link text shows the domain; hover to see full URL).
-        </p>
-      
-        <ol class="source-list">
-          <li><strong>Protoavis</strong> — <a href="https://www.dinosaurfact.net/Pictures/Protoavis3.jpg" title="https://www.dinosaurfact.net/Pictures/Protoavis3.jpg" target="_blank" rel="noopener noreferrer">dinosaurfact.net</a></li>
-          <li><strong>Coelophysis</strong> — <a href="https://static.wikia.nocookie.net/dinosaurs/images/b/bd/Coelophysis_feathers.png/revision/latest/scale-to-width-down/1000?cb=20141109150637" title="https://static.wikia.nocookie.net/dinosaurs/images/b/bd/Coelophysis_feathers.png/revision/latest/scale-to-width-down/1000?cb=20141109150637" target="_blank" rel="noopener noreferrer">static.wikia.nocookie.net</a></li>
-          <li><strong>Arcticodactylus</strong> — <a href="https://www.instagram.com/p/CIqTHZ4luwd/" title="https://www.instagram.com/p/CIqTHZ4luwd/" target="_blank" rel="noopener noreferrer">instagram.com</a></li>
-          <li><strong>Avicranium</strong> — <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" title="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" target="_blank" rel="noopener noreferrer">blogger.googleusercontent.com</a></li>
-      
-          <li><strong>Archaeopteryx</strong> — <a href="https://scitechdaily.com/images/Archaeopteryx-777x424.jpg" title="https://scitechdaily.com/images/Archaeopteryx-777x424.jpg" target="_blank" rel="noopener noreferrer">scitechdaily.com</a></li>
-          <li><strong>Compsognathus</strong> — <a href="https://nixillustration.com/wp-content/uploads/2024/08/compsognathus-768x581.png" title="https://nixillustration.com/wp-content/uploads/2024/08/compsognathus-768x581.png" target="_blank" rel="noopener noreferrer">nixillustration.com</a></li>
-      
-          <li><strong>Triassic Snapshot</strong> — <a href="https://www.britannica.com/science/Triassic-Period" title="https://www.britannica.com/science/Triassic-Period" target="_blank" rel="noopener noreferrer">britannica.com</a></li>
-          <li><strong>Flight Experiments image</strong> — <a href="https://phys.org/news/2023-03-hollow-bones-dinosaurs-giants-evolved.html" title="https://phys.org/news/2023-03-hollow-bones-dinosaurs-giants-evolved.html" target="_blank" rel="noopener noreferrer">phys.org</a></li>
-          <li><strong>Mesozoic timeline</strong> — <a href="https://earthhow.com/mesozoic-era/" title="https://earthhow.com/mesozoic-era/" target="_blank" rel="noopener noreferrer">earthhow.com</a></li>
-      
-          <li><strong>oviraptor anzu</strong> — <a href="https://www.nationalgeographic.com/science/article/mysterious-dinosaur-anzu-debuts" title="https://www.nationalgeographic.com/science/article/mysterious-dinosaur-anzu-debuts" target="_blank" rel="noopener noreferrer">nationalgeographic.com</a></li>
-          <li><strong>Dromaesaurs</strong> — <a href="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" title="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" target="_blank" rel="noopener noreferrer">media.australian.museum</a></li>
-          <li><strong>Quetzalcoatlus</strong> — <a href="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" title="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" target="_blank" rel="noopener noreferrer">pteros-img.imgix.net</a></li>
-      
-          <li><strong>Microraptor</strong> — <a href="https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg" title="https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg" target="_blank" rel="noopener noreferrer">sciencenews.org</a></li>
-          <li><strong>Anchiornis</strong> — <a href="https://www.smithsonianmag.com/science-nature/dinosaurs-now-in-living-color-63116194/" title="https://www.smithsonianmag.com/science-nature/dinosaurs-now-in-living-color-63116194/" target="_blank" rel="noopener noreferrer">smithsonianmag.com</a></li>
-          <li><strong>Confuciusornis</strong> — <a href="https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg" title="https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg" target="_blank" rel="noopener noreferrer">cdn.britannica.com</a></li>
-      
-          <li><strong>Sinosauropteryx</strong> — <a href="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" title="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" target="_blank" rel="noopener noreferrer">252mya.com</a></li>
-          <li><strong>Yi qi</strong> — <a href="https://www.nytimes.com/2020/10/22/science/jurassic-dinosaur-yi-qi-flight.html" title="https://www.nytimes.com/2020/10/22/science/jurassic-dinosaur-yi-qi-flight.html" target="_blank" rel="noopener noreferrer">nytimes.com</a></li>
-          <li><strong>Anurognathids</strong> — <a href="https://www.iflscience.com/meet-the-anurognathidae-tiny-bat-like-ptersosaurs-with-huge-eyes-76830" title="https://www.iflscience.com/meet-the-anurognathidae-tiny-bat-like-ptersosaurs-with-huge-eyes-76830" target="_blank" rel="noopener noreferrer">iflscience.com</a></li>
-        </ol>
-      </footer>
-</div>
-  </body>
+    <!--
+      FOOTER / BIBLIOGRAPHY
+      - The footer is also a grid section, using named areas for the heading,
+        note, and source list.
+      - The source list stays as an ordered list so the credits are easy to scan.
+    -->
+    <footer class="site-footer footer-grid">
+      <h2>Image Sources</h2>
+      <p class="footer-note">The links below credit the original image sources used on this page. The visible text shows the domain for cleaner reading, while the full address stays in the link itself.</p>
 
-  
-
+      <ol class="source-list">
+        <li><strong>Protoavis</strong> — <a href="https://www.dinosaurfact.net/Pictures/Protoavis3.jpg" title="https://www.dinosaurfact.net/Pictures/Protoavis3.jpg" target="_blank" rel="noopener noreferrer">dinosaurfact.net</a></li>
+        <li><strong>Coelophysis</strong> — <a href="https://static.wikia.nocookie.net/dinosaurs/images/b/bd/Coelophysis_feathers.png/revision/latest/scale-to-width-down/1000?cb=20141109150637" title="https://static.wikia.nocookie.net/dinosaurs/images/b/bd/Coelophysis_feathers.png/revision/latest/scale-to-width-down/1000?cb=20141109150637" target="_blank" rel="noopener noreferrer">static.wikia.nocookie.net</a></li>
+        <li><strong>Arcticodactylus</strong> — <a href="https://www.instagram.com/p/CIqTHZ4luwd/" title="https://www.instagram.com/p/CIqTHZ4luwd/" target="_blank" rel="noopener noreferrer">instagram.com</a></li>
+        <li><strong>Avicranium</strong> — <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" title="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" target="_blank" rel="noopener noreferrer">blogger.googleusercontent.com</a></li>
+        <li><strong>Archaeopteryx</strong> — <a href="https://scitechdaily.com/images/Archaeopteryx-777x424.jpg" title="https://scitechdaily.com/images/Archaeopteryx-777x424.jpg" target="_blank" rel="noopener noreferrer">scitechdaily.com</a></li>
+        <li><strong>Compsognathus</strong> — <a href="https://nixillustration.com/wp-content/uploads/2024/08/compsognathus-768x581.png" title="https://nixillustration.com/wp-content/uploads/2024/08/compsognathus-768x581.png" target="_blank" rel="noopener noreferrer">nixillustration.com</a></li>
+        <li><strong>Triassic Snapshot</strong> — <a href="https://www.britannica.com/science/Triassic-Period" title="https://www.britannica.com/science/Triassic-Period" target="_blank" rel="noopener noreferrer">britannica.com</a></li>
+        <li><strong>Flight Experiments</strong> — <a href="https://phys.org/news/2023-03-hollow-bones-dinosaurs-giants-evolved.html" title="https://phys.org/news/2023-03-hollow-bones-dinosaurs-giants-evolved.html" target="_blank" rel="noopener noreferrer">phys.org</a></li>
+        <li><strong>Mesozoic Timeline</strong> — <a href="https://earthhow.com/mesozoic-era/" title="https://earthhow.com/mesozoic-era/" target="_blank" rel="noopener noreferrer">earthhow.com</a></li>
+        <li><strong>Oviraptorosaurs / Anzu</strong> — <a href="https://www.nationalgeographic.com/science/article/mysterious-dinosaur-anzu-debuts" title="https://www.nationalgeographic.com/science/article/mysterious-dinosaur-anzu-debuts" target="_blank" rel="noopener noreferrer">nationalgeographic.com</a></li>
+        <li><strong>Dromaeosaurs</strong> — <a href="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" title="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" target="_blank" rel="noopener noreferrer">media.australian.museum</a></li>
+        <li><strong>Quetzalcoatlus</strong> — <a href="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" title="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" target="_blank" rel="noopener noreferrer">pteros-img.imgix.net</a></li>
+        <li><strong>Microraptor</strong> — <a href="https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg" title="https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg" target="_blank" rel="noopener noreferrer">sciencenews.org</a></li>
+        <li><strong>Anchiornis</strong> — <a href="https://www.smithsonianmag.com/science-nature/dinosaurs-now-in-living-color-63116194/" title="https://www.smithsonianmag.com/science-nature/dinosaurs-now-in-living-color-63116194/" target="_blank" rel="noopener noreferrer">smithsonianmag.com</a></li>
+        <li><strong>Confuciusornis</strong> — <a href="https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg" title="https://cdn.britannica.com/00/126200-050-12BE9CAB/Confuciusornis-sanctus-Confucius.jpg" target="_blank" rel="noopener noreferrer">cdn.britannica.com</a></li>
+        <li><strong>Sinosauropteryx</strong> — <a href="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" title="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" target="_blank" rel="noopener noreferrer">252mya.com</a></li>
+        <li><strong>Yi qi</strong> — <a href="https://www.nytimes.com/2020/10/22/science/jurassic-dinosaur-yi-qi-flight.html" title="https://www.nytimes.com/2020/10/22/science/jurassic-dinosaur-yi-qi-flight.html" target="_blank" rel="noopener noreferrer">nytimes.com</a></li>
+        <li><strong>Anurognathids</strong> — <a href="https://www.iflscience.com/meet-the-anurognathidae-tiny-bat-like-ptersosaurs-with-huge-eyes-76830" title="https://www.iflscience.com/meet-the-anurognathidae-tiny-bat-like-ptersosaurs-with-huge-eyes-76830" target="_blank" rel="noopener noreferrer">iflscience.com</a></li>
+      </ol>
+    </footer>
+  </div>
+</body>
 </html>

@@ -1,399 +1,278 @@
 /*
-  ============================================================
-  Project 2 Flexbox Change Notes 
-  ============================================================
-  - `.row` is the FLEX CONTAINER (display:flex).
-  - Cards are FLEX ITEMS and get their width from the `col-*` classes via `flex: 0 0 <basis>`.
-  - Responsive reflow (wrapping) AND item reordering (Row 5 requirement).
-  - Flexbox handles both cleanly with `flex-wrap` and `order`.
-  - Base (mobile): single-column stack (easy reading + predictable)
-  - >= 480px (tablet): mostly 2-up, with a few row-specific overrides to match the provided tablet screenshot
-  - >= 768px (desktop): matches the desktop screenshot layout
+  ============================================================================
+  Project 3 - CSS Grid Rewrite
+  ============================================================================
+  - The lecture introduced the core Grid mindset and baseline properties such as
+    display:grid, gap, grid-template-columns, grid-template-rows, grid-column,
+    and grid-row.
+  - This rewrite keeps that baseline, but also adds Grid features that go beyond
+    the lecture examples so the project clearly demonstrates new Grid behavior.
 
-  Column math / spacing:
-  - Consistent gutter using `margin-left: 4%` on each card.
-  - The container width for each card is based on the remaining 96% (100% - 4% gutter).
-    Examples:
-      * Full width: 92%  (one card + 4% left gutter)
-      * Two-up:     44%  (44 + 4 + 44 + 4 = 96)
-      * Four-up:    20%  (20 + 4 repeated = 96)
+  MDN REFERENCES USED FOR THE COMMENTS IN THIS FILE:
+  - Grid property reference:
+    https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid
+    MDN describes `grid` as a shorthand that sets explicit and implicit Grid
+    properties together. It also lists `grid-auto-flow` and
+    `grid-template-areas` as constituent Grid properties.
 
-  Row-specific requirements:
-  - Row 3 (desktop): 1-column + 3-column  (col-1 + col-3)
-  - Row 4 (desktop): full width           (col-4)
-  - Row 5: reorder on resize using `order`
-  - Row 6: unique row = nested flex thumbnail gallery (supports "extra" images)
+  - grid-auto-flow reference:
+    https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-auto-flow
+    MDN explains that `grid-auto-flow` controls how the auto-placement algorithm
+    works and how auto-placed items flow into the grid.
+
+  - grid-template-areas reference:
+    https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-areas
+    MDN explains that `grid-template-areas` specifies named grid areas,
+    establishing cells in the grid and assigning them names.
+
+  WHERE EACH APPROACH IS USED:
+  - grid-auto-flow:
+    * Hero strip
+    * Row 1 card strip
+    * Thumbnail gallery
+
+  - grid-template-areas:
+    * Row 2
+    * Row 3
+    * Row 4
+    * Row 5
+    * Footer / bibliography
+
+  Reasoning for the split:
+  - Auto-placement is better for repetitive content because the browser can place
+    similar items in sequence without the CSS naming every position.
+  - Named areas are better for composed sections with intentional hierarchy,
+    because they make the layout map readable directly in the stylesheet.
 */
 
-/* Border box declaration 
-https://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
+/*
+  Border-box sizing keeps padding and borders inside declared widths.
+  This makes Grid track sizing easier to reason about because card padding does
+  not unexpectedly increase the size of a track.
+*/
 html {
   box-sizing: border-box;
 }
-/* inherit border-box on all elements in the universe and before and after */
-*, 
-*:before, 
-*:after {
+
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
-body {
-  font-family: Arial, Geneva, sans-serif;
-  margin: 0;
+:root {
+  --ink: #010101;
+  --paper: #fefefe;
+  --purple: #6834d4;
+  --deep-purple: #35166e;
+  --soft-purple: #af93d7;
+  --emerald: #32c563;
+  --stone: #787878;
+  --mist: #f3f0fb;
+  --footer-bg: #f4f5f7;
+  --border-soft: rgba(1, 1, 1, 0.12);
+  --shadow-soft: 0 10px 24px rgba(53, 22, 110, 0.08);
 }
 
+body {
+  margin: 0;
+  font-family: Arial, Geneva, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(104, 52, 212, 0.08), transparent 32%),
+    linear-gradient(180deg, #ffffff 0%, #f8f7fc 100%);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+p {
+  line-height: 1.55;
+}
+
+strong {
+  color: var(--ink);
+}
+
+/*
+  Link colors use the darker purple so they still feel part of the palette while
+  remaining readable against light surfaces.
+*/
 a {
-  color: #2772B0;
+  color: var(--deep-purple);
 }
 
 .wrapper {
-  width: 97%;
-  max-width: 1200px;
+  width: min(96%, 1200px);
   margin: 0 auto;
-  float: none;
-  background-color: #fff;
-  padding-bottom: 2rem;
+  padding: 1rem 0 2rem;
 }
 
-/* changed to keep images consistent inside cards */
-article img {
-  width: 100%;
-  height: auto;
-  max-width: 225px;
-}
-
-/* ============================================================
-   Flex grid system (mobile-first)
-   - `.row` creates a flex formatting context.
-   - `flex-flow: row wrap` means: place items in a row, but allow wrapping onto new lines.
-   ============================================================ */
+/*
+  Every major content band uses Grid.
+  Unlike the old flex version, the row container itself now defines the layout
+  tracks and the spacing between items.
+*/
 .row {
-  display: flex;
-  flex-flow: row wrap;
+  display: grid;
+  gap: 1rem;
   margin-top: 1.25rem;
 }
 
-/* Flex items:
-   - Attribute selector grabs col-1/2/3/4 without repeating rules.
-   - `flex: 0 0 92%` on mobile means: do not grow, do not shrink, take ~full width.
-   - `margin-left: 4%` is the gutter; consistent across all breakpoints.
+/*
+  Generic card styling is separate from placement.
+  In Flexbox, width was tied to flex-basis on each card.
+  In Grid, the container handles the track sizing, so cards mostly need visual
+  styling and internal spacing.
 */
-[class*="col-"] {
-  margin-left: 4%;
-  flex: 0 0 92%;
-  padding: 0.75rem;
-  border-radius: 10px;
-}
-
-h3 {
-  margin: 0 0 0.5rem 0;
-}
-
-/* Column span classes do 2 jobs:
-   1) visual debugging (background colors so you can see the layout)
-   2) responsive width control via `flex-basis` (set in media queries)
-*/
-.col-1 { background-color: #A3CDD9; }   /* light blue */
-.col-2 { background-color: #FFFCE6; }   /* light cream */
-
-/* New Content */
-.col-3 { background-color: #F2D049; }   /* warm yellow (3-column span) */
-.col-4 { background-color: #C9C0B7; }   /* gray/taupe (full width) */
-
-/* Row 6 unique cards (different color + nested flex) */
-.col-feature { background-color: #E6F4EA; } /* soft green */
-
-/* ============================================================
-   Row 5: Property used: `order` (Flexbox)
-   - On mobile/tablet: featured center card is order:1 so it appears first when stacked.
-   - On desktop: restore left-center-right by setting explicit order values again.
-   ============================================================ */
-.row5-center { order: 1; }
-.row5-left   { order: 2; }
-.row5-right  { order: 3; }
-
-/* Row 6 unique container (thumbnail gallery) */
-.col-gallery { background-color: #E6F4EA; } /* soft green */
-
-/* ============================================================
-   Row 6 (unique row): Nested flex thumbnail gallery:
-   - Flex container inside a flex item (`.thumbs` inside `.col-gallery`)
-   - Supports more than 4 items per row on desktop (6 across)
-   Flex properties used:
-   - `flex-wrap: wrap` to create a responsive grid without media-query-heavy markup changes.
-   - `justify-content: space-between` to distribute thumbnails across the row.
-   - `gap` for consistent spacing without manual margins.
-   ============================================================ */
-.thumbs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-between; /* another flex property for the distribution of flex items within the container */
-  margin-top: 0.75rem;
-}
-
-.thumb {
-  flex: 1 1 calc(50% - 1rem); /* mobile: 2 across */
-  text-decoration: none;
-  color: inherit;
-}
-
-.thumb img {
-  width: 100%;
-  max-width: none; /* override global max-width for thumbnails */
-  border-radius: 10px;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-
-.thumb span {
-  display: block;
-  margin-top: 0.35rem;
-  font-size: 0.95rem;
-}
-
-/* Row 6 nested flex media object */
-.media {
-  display: flex;
-  flex-direction: column; /* our standard flex direction */
-  gap: 0.75rem;
-}
-.media-body p {
-  margin: 0 0 0.5rem 0;
-}
-
-/* Tablet Landscape Screen Sizes */
-@media only screen and (min-width: 480px)  {
-
-  .col-1,
-  .col-2 {
-    flex: 0 0 44%;
-  }
-  /* Row 6 gallery: 3 across on tablet */
-  .thumb { flex: 1 1 calc(33.333% - 1rem); }
-  /* default behavior for span classes on tablet */
-  .col-3,
-  .col-4,
-  .col-feature {
-    flex: 0 0 92%;
-  }
-
-  /* Row 3 (tablet): stack the 1-col + 3-col items */
-  .row--third .col-1 {
-    flex: 0 0 92%;
-  }
-
-  /* Row 5 (tablet): center feature full width, then two side items */
-  .row--fifth .col-2 {
-    flex: 0 0 92%;
-  }
-
-  /* Row 6: show media (image + text) side-by-side */
-  .media {
-    flex-direction: row; /*uses flex-direction: row for layout */
-    align-items: flex-start;
-  }
-}
-
-/* Desktop screen Sizes */
-@media only screen and (min-width: 768px) {
-
-  .col-1 { flex: 0 0 20%; }
-  .col-2 { flex: 0 0 44%; }
-
-  /* Desktop span rules */
-  /* Row 3 (desktop): force 1-col + 3-col side-by-side */
-  .row--third .col-1 { flex: 0 0 20%; }
-  .row--third .col-3 { flex: 0 0 68%; } /* 3-column span */
-  .col-4 { flex: 0 0 92%; }  /* full width */
-
-  /* Row 5 (desktop): restore left-center-right ordering */
-  .row5-left   { order: 1; }
-  .row5-center { order: 2; }
-  .row5-right  { order: 3; }
-  /* Row 5 (desktop): force 1-col + 2-col + 1-col side-by-side */
-  .row--fifth .col-2 { flex: 0 0 44%; }
-
-  /* Row 6 unique: wide + narrow using flex-grow */
-  .row--sixth .col-feature {
-    flex: 1 1 44%; /*note that its flex-grow: 1, flex-shrink: 1, and flex-basis: 44% */
-  }
-  .row--sixth .col-feature.is-wide {
-    flex: 2 1 44%;
-  }
-  /* Row 6 gallery: 6 across on desktop (more than 4 items) */
-  .thumb { flex: 1 1 calc(16.666% - 1rem); }
-}
-
-/* ============================================================
-   Footer: image source credits
-   - A semantic footer keeps credits for images grouped 
-   - `columns: 2` on desktop makes long credit lists readable without huge vertical scrolling.
-   - `word-break: break-word` prevents long URLs from overflowing the layout. helps keep it tidy 
-   ============================================================ */
-.site-footer {
-  margin-top: 1.5rem;
-  margin-left: 4%;
-  width: 92%;
+.card {
+  min-width: 0;
   padding: 1rem;
-  border-radius: 10px;
-  background-color: #f5f5f5;
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
 }
 
-.site-footer h2 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-}
-
-.footer-note {
-  margin: 0 0 0.75rem 0;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.source-list {
-  margin: 0;
-  padding-left: 1.25rem;
-  line-height: 1.5;
-  font-size: 0.95rem;
-}
-
-.source-list li {
-  margin-bottom: 0.35rem;
-  word-break: break-word; /* prevents long URLs from blowing out layout */
-}
-
-/* Make it compact on wider screens */
-@media only screen and (min-width: 768px) {
-  .source-list {
-    columns: 2;
-    column-gap: 2rem;
-  }
-  .source-list li {
-    break-inside: avoid;
-  }
-}
-
-/* ============================================================
-   NOTE: Legacy header styles
-   - The project initially used a static banner image (`.site-banner`) and separate `.site-title/.site-tagline`.
-   - The current build uses the CSS-only hero collage instead (`.hero-*`).
-   - Keeping these styles doesn't break anything, but are kept as a reference for the original layout
-   ============================================================ */
-/* ===== Site header ===== */
-.site-header {
-  width: 92%;
-  margin-left: 4%;
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.site-title {
-  margin: 0;
-  font-size: 1.75rem;
-  line-height: 1.15;
-}
-
-.site-tagline {
-  margin: 0.25rem 0 0;
-  font-size: 1.05rem;
-  font-style: italic;
-}
-
-.site-banner {
-  margin-top: 0.75rem;
-}
-
-/* Override generic image sizing rules for the banner */
-.site-banner img {
+.card img {
   width: 100%;
   height: auto;
-  max-width: none;
-  display: block;
-  border-radius: 10px;
+  border-radius: 12px;
+  margin-bottom: 0.9rem;
 }
 
-/* Desktop: put title + tagline on one line */
-@media only screen and (min-width: 768px) {
-  .site-header-top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .site-tagline {
-    margin: 0;
-    text-align: right;
-    white-space: nowrap;
-  }
+.card h2 {
+  margin-bottom: 0.65rem;
 }
 
-/* ===== Header hero (gallery collage) ===== */
+.card--soft {
+  background-color: var(--soft-purple);
+  color: var(--ink);
+}
+
+.card--accent {
+  background-color: var(--purple);
+  color: var(--paper);
+}
+
+.card--highlight {
+  background-color: var(--emerald);
+  color: var(--ink);
+}
+
+.card--neutral {
+  background-color: #ececec;
+  color: var(--ink);
+}
+
+.card--deep {
+  background-color: var(--deep-purple);
+  color: var(--paper);
+}
+
+.card--deep-alt {
+  background-color: var(--purple);
+  color: var(--paper);
+}
+
+.card--feature {
+  color: var(--paper);
+  background: linear-gradient(180deg, rgba(104, 52, 212, 0.98), rgba(53, 22, 110, 0.98));
+}
+
+.card--wide {
+  background-color: var(--stone);
+  color: var(--paper);
+}
+
+.card--gallery {
+  background-color: var(--mist);
+  color: var(--ink);
+}
+
+.card--soft a,
+.card--highlight a,
+.card--neutral a,
+.card--gallery a {
+  color: var(--deep-purple);
+}
+
+.card--accent a,
+.card--deep a,
+.card--deep-alt a,
+.card--feature a,
+.card--wide a {
+  color: var(--paper);
+}
+
+/*
+  HEADER / HERO
+  ----------------------------------------------------------------------------
+  This section demonstrates `grid-auto-flow`.
+  - The hero is made of a repeating sequence of visual tiles.
+  - The tiles do not need unique named positions.
+  - Auto-placement lets the browser place them in order.
+
+  MDN connection:
+  - MDN says `grid-auto-flow` controls how the auto-placement algorithm works.
+  - Here the value `column` means each new tile creates the next column in the
+    horizontal strip.
+
+  Additional Grid values used here:
+  - `grid-auto-columns` defines the width of auto-created hero columns.
+  - `minmax()` lets the strip stay flexible instead of locking to a fixed width.
+*/
 .site-header {
-  width: 92%;
-  margin-left: 4%;
-  margin-top: 1rem;
   margin-bottom: 1.25rem;
 }
 
 .hero {
   position: relative;
-  border-radius: 10px;
+  min-height: 260px;
   overflow: hidden;
-  min-height: 220px;
-  background-color: #111; /* fallback if images fail */
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  background-color: var(--deep-purple);
+  box-shadow: var(--shadow-soft);
 }
 
-/* ===== Header hero (gallery collage) ===== */
-.hero {
-  position: relative;
-  border-radius: 10px;
-  overflow: hidden;
-  min-height: 220px;
-  background-color: #111;
-}
-
-/* ============================================================
-   Header hero: Gallery Banner
-   - HTML defines 6 empty `.hero-tile` spans.
-   - Inline style on the hero section defines `--hero-1..--hero-6` URLs.
-   - CSS maps each tile to a background-image variable.
-
-   Mobile behavior (default):
-   - `.hero-tiles` is a horizontal flex strip (`flex-wrap: nowrap`) with `overflow-x:auto`.
-   - `scroll-snap-type` makes the tiles snap cleanly as you swipe.
-   ============================================================ */
-/* MOBILE (default): horizontal scroll film strip */
 .hero-tiles {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(72%, 1fr);
+  gap: 0.35rem;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;          /* Firefox */
+  scrollbar-width: none;
 }
-.hero-tiles::-webkit-scrollbar {  /* Chrome/Safari */
+
+.hero-tiles::-webkit-scrollbar {
   display: none;
 }
 
 .hero-tile {
-  flex: 0 0 70%;                  /* tile width; tweak (60–85%) to taste */
-  height: 100%;
-  background-size: cover;
+  min-height: 260px;
   background-position: center;
-  filter: saturate(1.08) contrast(1.05);
-  scroll-snap-align: start;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: saturate(1.05) contrast(1.03);
 }
 
-/* tiles are gallery-like */
-.hero-tile + .hero-tile {
-  box-shadow: inset 6px 0 0 rgba(0,0,0,0.25);
-}
-
-/* keep tile-to-image mapping */
 .hero-tile:nth-child(1) { background-image: var(--hero-1); }
 .hero-tile:nth-child(2) { background-image: var(--hero-2); }
 .hero-tile:nth-child(3) { background-image: var(--hero-3); }
@@ -401,65 +280,368 @@ h3 {
 .hero-tile:nth-child(5) { background-image: var(--hero-5); }
 .hero-tile:nth-child(6) { background-image: var(--hero-6); }
 
-/* dark overlay for readable text */
 .hero::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0,0,0,0.60), rgba(0,0,0,0.20));
+  background: linear-gradient(90deg, rgba(1, 1, 1, 0.68), rgba(1, 1, 1, 0.25));
   z-index: 0;
 }
 
-/* overlay text */
+/*
+  The overlay text uses Grid too, to avoid leaving old flexbox code
+  in place. `place-content:end start` pushes the text block to the lower-left.
+*/
 .hero-content {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
-  height: 100%;
+  display: grid;
+  place-content: end start;
+  gap: 0.35rem;
   padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end; 
+}
+
+.eyebrow {
+  margin-bottom: 0;
+  color: var(--emerald);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
 }
 
 .hero-title {
-  margin: 0;
-  color: #662020;
-  font-size: 1.9rem;
-  line-height: 1.1;
-  letter-spacing: 0.5px;
+  margin-bottom: 0;
+  color: var(--paper);
+  font-size: 2rem;
+  line-height: 1.05;
 }
 
 .hero-tagline {
-  margin: 0.35rem 0 0;
-  color: #662020;
-  font-size: 1.1rem;
-  font-style: italic;
+  max-width: 42rem;
+  margin-bottom: 0;
+  color: var(--paper);
+  font-size: 1.05rem;
 }
 
-/* Tablet+ behavior:
-   - Switch from the swipeable film strip to a static collage using CSS Grid
-   - "Banner-like" on larger screens and matches the tablet screenshot
+/*
+  ROW 1 - AUTO-PLACED CARD STRIP
+  ----------------------------------------------------------------------------
+  - All cards are peers. They can be placed in source order without naming each cell.
+  - Keeps the CSS shorter and makes it easier to add or remove a card.
+
+  MDN connection:
+  - MDN says `grid-auto-flow: row` fills each row in turn and adds new rows as
+    necessary.That is exactly what this repeating strip needs.
 */
-/* tablet+ : switch to non-scroll collage */
+.row--first {
+  grid-template-columns: 1fr;
+  grid-auto-flow: row;
+}
+
+/*
+  ROW 2 - NAMED LEFT / RIGHT AREAS
+  ----------------------------------------------------------------------------
+  grid-template-areas:
+  - This row is not a generic strip.
+  - It has an intentional left/right comparison layout.
+  - The named areas make the design readable directly in the CSS.
+*/
+.row--second {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "arch"
+    "comp";
+}
+
+.row2-left {
+  grid-area: arch;
+}
+
+.row2-right {
+  grid-area: comp;
+}
+
+/*
+  ROW 3 - SIDEBAR + FEATURE
+  ----------------------------------------------------------------------------
+  This row benefits from explicit placement because it has one supporting card
+  and one larger feature card. Named areas communicate that hierarchy more
+  clearly than auto-placement.
+*/
+.row--third {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "snapshot"
+    "flight";
+}
+
+.row3-left {
+  grid-area: snapshot;
+}
+
+.row3-right {
+  grid-area: flight;
+}
+
+/*
+  ROW 4 - FULL-WIDTH PANEL
+  ----------------------------------------------------------------------------
+  Using a named area here keeps the lower half of the site consistent.
+  The layout still reads as a grid map instead of reverting to a one-off width
+  rule.
+*/
+.row--fourth {
+  grid-template-columns: 1fr;
+  grid-template-areas: "timeline";
+}
+
+.row4-main {
+  grid-area: timeline;
+}
+
+/*
+  ROW 5 - FEATURE FIRST ON SMALL SCREENS, BALANCED ON DESKTOP
+  ----------------------------------------------------------------------------
+  grid-template-areas:
+  - In the old flexbox version, the middle card was moved with `order`.
+  - In Grid, the layout can be remapped by changing area names instead.
+  - This is cleaner because the visual hierarchy lives in the grid map itself.
+*/
+.row--fifth {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "feature"
+    "left"
+    "right";
+}
+
+.row5-left {
+  grid-area: left;
+}
+
+.row5-center {
+  grid-area: feature;
+}
+
+.row5-right {
+  grid-area: right;
+}
+
+/*
+  ROW 6 - THUMBNAIL GALLERY
+  ----------------------------------------------------------------------------
+  grid-auto-flow:
+  - The gallery is a repeating collection of thumbnails.New items can be 
+    inserted without updating a named template map.
+  - The browser can place items in sequence while the template tracks resize.
+
+  Additional Grid values used here:
+  - `repeat(auto-fit, minmax(...))` is useful beyond the lecture baseline.
+  - `auto-fit` collapses unused tracks and `minmax()` keeps thumbnails from
+    shrinking too far.
+
+  MDN note about dense packing:
+  - MDN explains that `dense` may backfill earlier holes and can make items look
+    out of order.
+  - This gallery intentionally keeps the normal sparse behavior so source order
+    and reading order stay aligned.
+*/
+.gallery-shell {
+  padding-bottom: 1.25rem;
+}
+
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-auto-flow: row;
+  gap: 1rem;
+  margin: 1rem 0 1.1rem;
+}
+
+.thumb {
+  text-decoration: none;
+  color: inherit;
+}
+
+.thumb img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.thumb span {
+  display: block;
+  font-weight: 700;
+}
+
+/*
+  FOOTER / BIBLIOGRAPHY
+  ----------------------------------------------------------------------------
+  The footer uses `grid-template-areas` because it contains three distinct
+  semantic pieces: a title, an explanatory note, and a source list.
+  This is more intentional than auto-flow and keeps the footer easy to remap at
+  larger breakpoints.
+*/
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "footer-title"
+    "footer-note"
+    "footer-sources";
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  background-color: var(--footer-bg);
+  box-shadow: var(--shadow-soft);
+}
+
+.footer-grid h2 {
+  grid-area: footer-title;
+  margin-bottom: 0;
+}
+
+.footer-note {
+  grid-area: footer-note;
+  margin-bottom: 0;
+}
+
+.source-list {
+  grid-area: footer-sources;
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 1.5;
+}
+
+.source-list li {
+  margin-bottom: 0.4rem;
+  word-break: break-word;
+}
+
+/*
+  TABLET BREAKPOINT
+  ----------------------------------------------------------------------------
+  The layout begins to use multiple columns, but the lower feature rows still
+  keep their hierarchy.
+*/
 @media only screen and (min-width: 480px) {
+  .hero {
+    min-height: 280px;
+  }
+
   .hero-tiles {
-    display: grid;
-    overflow: hidden;
-    scroll-snap-type: none;
-    grid-template-columns: repeat(6, 1fr);
+    grid-auto-columns: 1fr;
   }
 
   .hero-tile {
-    flex: initial;
-    scroll-snap-align: none;
-    height: auto;
+    min-height: 280px;
   }
 
-  .hero { min-height: 240px; }
+  .row--first {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .row--second {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "arch comp";
+  }
+
+  .row--third {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "snapshot snapshot"
+      "flight flight";
+  }
+
+  .row--fifth {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "feature feature"
+      "left right";
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "footer-title footer-title"
+      "footer-note footer-note"
+      "footer-sources footer-sources";
+  }
 }
 
-/* desktop */
+/*
+  DESKTOP BREAKPOINT
+  ----------------------------------------------------------------------------
+  This is where Grid shows its main advantage over the original flexbox version:
+  the page can define complete two-dimensional layouts with explicit track maps.
+*/
 @media only screen and (min-width: 768px) {
-  .hero { min-height: 280px; }
-  .hero-title { font-size: 2.25rem; }
+  .wrapper {
+    padding-top: 1.25rem;
+  }
+
+  .hero {
+    min-height: 320px;
+  }
+
+  .hero-title {
+    font-size: 2.45rem;
+  }
+
+  .hero-tagline {
+    font-size: 1.12rem;
+  }
+
+  /* Four-up card strip */
+  .row--first {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* 2 + 2 comparison row */
+  .row--second {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas: "arch arch comp comp";
+  }
+
+  /* 1 + 3 feature row */
+  .row--third {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas: "snapshot flight flight flight";
+  }
+
+  /* Full-width timeline */
+  .row--fourth {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas: "timeline timeline timeline timeline";
+  }
+
+  /* 1 + 2 + 1 lower feature row */
+  .row--fifth {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas: "left feature feature right";
+  }
+
+  /* Footer becomes a more editorial two-column reference block */
+  .footer-grid {
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas:
+      "footer-title footer-title"
+      "footer-note footer-sources";
+    align-items: start;
+  }
+
+  .source-list {
+    columns: 2;
+    column-gap: 2rem;
+  }
+
+  .source-list li {
+    break-inside: avoid;
+  }
 }
