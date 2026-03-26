@@ -2,47 +2,62 @@
   ============================================================================
   Project 3 - CSS Grid Rewrite
   ============================================================================
-  - The lecture introduced the core Grid mindset and baseline properties such as
+  - Baseline properties used:
     display:grid, gap, grid-template-columns, grid-template-rows, grid-column,
-    and grid-row.
+    and grid-row
   - This rewrite keeps that baseline, but also adds Grid features that go beyond
-    the lecture examples so the project clearly demonstrates new Grid behavior.
+    the lecture examples so the project demonstrates new Grid behavior.
 
-  MDN REFERENCES USED FOR THE COMMENTS IN THIS FILE:
+  MDN references:
   - Grid property reference:
-    https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid
-    MDN describes `grid` as a shorthand that sets explicit and implicit Grid
-    properties together. It also lists `grid-auto-flow` and
-    `grid-template-areas` as constituent Grid properties.
-
-  - grid-auto-flow reference:
-    https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-auto-flow
-    MDN explains that `grid-auto-flow` controls how the auto-placement algorithm
-    works and how auto-placed items flow into the grid.
-
-  - grid-template-areas reference:
-    https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/grid-template-areas
-    MDN explains that `grid-template-areas` specifies named grid areas,
-    establishing cells in the grid and assigning them names.
-
-  WHERE EACH APPROACH IS USED:
+    https://developer.mozilla.org/en-US/docs/Web/CSS/grid
   - grid-auto-flow:
-    * Hero strip
-    * Row 1 card strip
-    * Thumbnail gallery
-
+    https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow
+  - grid-auto-columns:
+    https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns
   - grid-template-areas:
-    * Row 2
-    * Row 3
-    * Row 4
-    * Row 5
-    * Footer / bibliography
+    https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-areas
+  - grid-area:
+    https://developer.mozilla.org/en-US/docs/Web/CSS/grid-area
+  - repeat() / minmax():
+    https://developer.mozilla.org/en-US/docs/Web/CSS/repeat
+    https://developer.mozilla.org/en-US/docs/Web/CSS/minmax
+  - place-content:
+    https://developer.mozilla.org/en-US/docs/Web/CSS/place-content
+
+  Extre Grid Properties Used:
+  - grid-auto-flow: column    -> Hero tile strip (horizontal auto-placement)
+  - grid-auto-columns         -> Hero tile strip (implicit column sizing)
+  - grid-template-areas       -> Rows 2–5, footer (named layout maps)
+  - grid-area                 -> All named-area rows (item placement)
+  - repeat(auto-fit, minmax)  -> Thumbnail gallery (self-adjusting columns)
+  - place-content             -> Hero overlay (shorthand alignment)
+
+  CSS add ons (interactivity):
+  - :has()         -> .card:has(a:hover) border shift (relational selector)
+  - transition      -> Cards and thumbnails (smooth hover states)
+  - @keyframes      -> fadeSlideUp, fadeIn (load animations)
+  - animation-delay -> Row 1 staggered card entrance
+  - :focus-visible  -> Keyboard-only focus outlines
+
+  How Grid is used:
+  - grid-auto-flow (auto-placement):
+    - Hero strip — repetitive decorative tiles, source order sufficient
+    - Row 1 card strip — four peer cards, no hierarchy needed
+    - Thumbnail gallery — scalable collection, no named map needed
+
+  - grid-template-areas (named areas):
+    - Row 2 — intentional left/right comparison layout
+    - Row 3 — sidebar + feature hierarchy (1:3 column ratio)
+    - Row 4 — full-width callout panel
+    - Row 5 — flanked feature with breakpoint reorder (no `order` needed)
+    - Footer — three semantic zones remapped at desktop
 
   Reasoning for the split:
-  - Auto-placement is better for repetitive content because the browser can place
-    similar items in sequence without the CSS naming every position.
-  - Named areas are better for composed sections with intentional hierarchy,
-    because they make the layout map readable directly in the stylesheet.
+  - Auto-placement suits repetitive content where source order is the correct
+    visual order and no positional hierarchy needs to be expressed.
+  - Named areas suit composed sections where the layout map itself communicates
+    the design intent and needs to be remapped across breakpoints.
 */
 
 /*
@@ -116,6 +131,60 @@ a {
   color: var(--deep-purple);
 }
 
+/*
+  :focus-visible — keyboard-only focus styles
+  - Applies the outline only when the element is focused via keyboard navigation,
+    not on mouse click. This keeps the UI clean for mouse users while remaining
+    fully accessible for keyboard users.
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
+*/
+a:focus-visible,
+.thumb:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/*
+  animations — @keyframes fadeSlideUp + fadeIn
+  ----------------------------------------------------------------------------
+  Features used:
+
+  @keyframes
+  - Defines a named animation sequence. Each percentage (or from/to) sets the
+    CSS state at that point in the animation timeline.
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes
+
+  animation / animation-delay
+  - `animation` applies a named keyframe sequence to an element.
+  - `animation-delay` staggers when each element starts its animation, creating
+    a sequential appearance effect without JavaScript.
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/animation
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/animation-delay
+
+  animation-fill-mode: both
+  - Ensures the element starts in the `from` state (invisible, shifted down)
+    before the animation begins, and stays in the `to` state after it ends.
+    Without this, elements would flash visible before their delay fires.
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode
+*/
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .wrapper {
   width: min(96%, 1200px);
   margin: 0 auto;
@@ -145,6 +214,41 @@ a {
   border: 1px solid var(--border-soft);
   border-radius: 16px;
   box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgba(53, 22, 110, 0.18);
+}
+
+/*
+  Interactivity — :has(), transitions, and :focus-visible
+  ----------------------------------------------------------------------------
+
+  1. :has() — relational pseudo-class
+     - Selects an element based on whether it contains a matching descendant.
+     - `.card:has(a:hover)` targets the entire card when any link inside it
+       is hovered, shifting the border color to reinforce the card as a
+       clickable unit — without any JavaScript.
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/:has
+
+  2. transition
+     - Smoothly animates changes to `transform`, `box-shadow`, and
+       `border-color` over 0.2s so hover states feel polished rather than
+       instant.
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/transition
+
+  3. :focus-visible (see Task 7 section below)
+     - Applies focus styles only when the element is focused via keyboard,
+       not on mouse click — improving accessibility without ugly outlines
+       on every click.
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
+*/
+
+/* Entire card highlights when any link inside it is hovered */
+.card:has(a:hover) {
+  border-color: var(--purple);
 }
 
 .card img {
@@ -219,21 +323,34 @@ a {
 }
 
 /*
-  HEADER / HERO
+  HEADER / HERO — grid-auto-flow: column + grid-auto-columns + minmax()
   ----------------------------------------------------------------------------
-  This section demonstrates `grid-auto-flow`.
-  - The hero is made of a repeating sequence of visual tiles.
-  - The tiles do not need unique named positions.
-  - Auto-placement lets the browser place them in order.
+  Properties Used:
 
-  MDN connection:
-  - MDN says `grid-auto-flow` controls how the auto-placement algorithm works.
-  - Here the value `column` means each new tile creates the next column in the
-    horizontal strip.
+  1. grid-auto-flow: column
+     - By default, Grid places items row by row. Setting `grid-auto-flow: column`
+       switches the auto-placement algorithm to fill columns first instead.
+     - Each new hero tile creates the next column in the horizontal strip rather
+       than wrapping to a new row.
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow
 
-  Additional Grid values used here:
-  - `grid-auto-columns` defines the width of auto-created hero columns.
-  - `minmax()` lets the strip stay flexible instead of locking to a fixed width.
+  2. grid-auto-columns: minmax(72%, 1fr)
+     - `grid-auto-columns` sets the size of implicitly created columns — columns
+       that the browser generates automatically via auto-placement.
+     - `minmax(72%, 1fr)` means each tile is at least 72% of the container wide
+       (so only one tile is visible at a time on small screens, creating a
+       horizontal scroll effect) but can grow to fill equal space on wider screens.
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns
+
+  3. minmax()
+     - A Grid sizing function that sets a minimum and maximum track size.
+     - Used here so tiles are never smaller than 72% wide but can expand to 1fr.
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/minmax
+
+  Auto-placement benefits:
+  The six tiles are purely decorative and visually identical in structure.
+  They do not need unique named positions — source order is the correct order.
+  Auto-placement keeps the CSS shorter and makes adding/removing tiles trivial.
 */
 .site-header {
   margin-bottom: 1.25rem;
@@ -289,8 +406,24 @@ a {
 }
 
 /*
-  The overlay text uses Grid too, to avoid leaving old flexbox code
-  in place. `place-content:end start` pushes the text block to the lower-left.
+  HERO OVERLAY — place-content: end start (nested grid for text positioning)
+  ----------------------------------------------------------------------------
+
+  place-content: end start
+  - `place-content` is a shorthand for two Grid (and Flexbox) alignment
+    properties written together: `align-content` and `justify-content`.
+  - Syntax: place-content: <align-content> <justify-content>
+  - `end` (align-content) pushes the content block to the bottom of the grid.
+  - `start` (justify-content) aligns the content block to the left.
+  - Result: the hero text group (eyebrow + title + tagline) is anchored to the
+    bottom-left corner of the overlay, which is a common editorial layout for
+    hero banners.
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/place-content
+
+  Nested Grid:
+  `.hero-content` is itself a grid container so that `place-content` can
+  position the text block as a unit. Without `display: grid`, `place-content`
+  has no effect. This avoids any flexbox and keeps the entire layout in Grid.
 */
 .hero-content {
   position: absolute;
@@ -316,6 +449,7 @@ a {
   color: var(--paper);
   font-size: 2rem;
   line-height: 1.05;
+  animation: fadeSlideUp 0.6s ease both;
 }
 
 .hero-tagline {
@@ -323,30 +457,65 @@ a {
   margin-bottom: 0;
   color: var(--paper);
   font-size: 1.05rem;
+  animation: fadeSlideUp 0.6s ease 0.15s both;
 }
 
-/*
-  ROW 1 - AUTO-PLACED CARD STRIP
-  ----------------------------------------------------------------------------
-  - All cards are peers. They can be placed in source order without naming each cell.
-  - Keeps the CSS shorter and makes it easier to add or remove a card.
 
-  MDN connection:
-  - MDN says `grid-auto-flow: row` fills each row in turn and adds new rows as
-    necessary.That is exactly what this repeating strip needs.
+/*
+  ROW 1 — grid-auto-flow: row (auto-placement for a peer card strip)
+  ----------------------------------------------------------------------------
+  Properties used:
+
+  grid-auto-flow: row
+  - Controls how the auto-placement algorithm fills the grid.
+  - The default value is `row`, meaning items fill each row left-to-right and
+    the browser creates new rows as needed.
+  - Explicitly setting it here documents the intent: these four cards are peers
+    with no hierarchy, so source order is the correct visual order.
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow
+
+  benefits of auto-placement:
+  All four cards are structurally identical — same size, same importance.
+  Named areas would require four unique names and four `grid-area` assignments
+  for no compositional benefit. Auto-placement keeps the CSS minimal and makes
+  adding or removing a card trivial (no template map to update).
+
+  contrast with named-areas:
+  Rows 2–5 use `grid-template-areas` because they have intentional hierarchy
+  (sidebar + feature, flanked feature, etc.) that auto-placement cannot express.
 */
 .row--first {
   grid-template-columns: 1fr;
   grid-auto-flow: row;
 }
 
+/* Staggered fade-in for Row 1 cards */
+.row--first .card:nth-child(1) { animation: fadeSlideUp 0.5s ease 0.0s both; }
+.row--first .card:nth-child(2) { animation: fadeSlideUp 0.5s ease 0.1s both; }
+.row--first .card:nth-child(3) { animation: fadeSlideUp 0.5s ease 0.2s both; }
+.row--first .card:nth-child(4) { animation: fadeSlideUp 0.5s ease 0.3s both; }
+
 /*
-  ROW 2 - NAMED LEFT / RIGHT AREAS
+/*
+  ROW 2 — grid-template-areas: left/right comparison layout
   ----------------------------------------------------------------------------
-  grid-template-areas:
-  - This row is not a generic strip.
-  - It has an intentional left/right comparison layout.
-  - The named areas make the design readable directly in the CSS.
+  properties:
+
+  grid-template-areas
+  - Defines a visual map of the grid by assigning string names to cells.
+  - Each quoted string represents one row; each word in the string is one cell.
+  - Items are placed into named cells using the `grid-area` property.
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-areas
+
+  grid-area
+  - Assigns a grid item to a named area defined by `grid-template-areas`.
+  - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/grid-area
+
+  named-areas (not auto-placement):
+  This row has an intentional left/right comparison — Archaeopteryx vs.
+  Compsognathus. The named map "arch comp" communicates that hierarchy directly
+  in the CSS. At desktop the map becomes "arch arch comp comp" (each card spans
+  two columns), which is easy to read and remap without touching the HTML.
 */
 .row--second {
   grid-template-columns: 1fr;
@@ -364,11 +533,23 @@ a {
 }
 
 /*
-  ROW 3 - SIDEBAR + FEATURE
+  ROW 3 — grid-template-areas: sidebar + feature composition
   ----------------------------------------------------------------------------
-  This row benefits from explicit placement because it has one supporting card
-  and one larger feature card. Named areas communicate that hierarchy more
-  clearly than auto-placement.
+  properties: grid-template-areas, grid-area
+  (see Row 2 comment for full MDN references)
+
+  named areas:
+  This row has a clear hierarchy: one narrow context card (Triassic Snapshot)
+  supporting one wider feature card (Flight Experiments). At desktop the map
+  becomes "snapshot flight flight flight" — the snapshot takes 1 column and
+  the feature takes 3. That 1:3 ratio is expressed directly in the area string,
+  making the design intent readable without counting pixel values.
+
+  breakpoint mapping (no `order`, no flexbox):
+  - Mobile: each card stacks full-width (single column)
+  - Tablet: both cards span full width stacked (snapshot above flight)
+  - Desktop: 1-col snapshot + 3-col flight side by side
+  Reordering is done by rewriting the area map, not by using `order`.
 */
 .row--third {
   grid-template-columns: 1fr;
@@ -386,11 +567,16 @@ a {
 }
 
 /*
-  ROW 4 - FULL-WIDTH PANEL
+  ROW 4 — grid-template-areas: full-width callout panel
   ----------------------------------------------------------------------------
-  Using a named area here keeps the lower half of the site consistent.
-  The layout still reads as a grid map instead of reverting to a one-off width
-  rule.
+  properties: grid-template-areas, grid-area
+  (see Row 2 comment for full MDN references)
+
+  WHY NAMED AREAS HERE:
+  A single named area ("timeline") keeps the lower half of the page using one
+  consistent Grid language. The layout reads as a grid map rather than a
+  one-off `width: 100%` rule, and it can be remapped at any breakpoint without
+  changing the HTML.
 */
 .row--fourth {
   grid-template-columns: 1fr;
@@ -402,12 +588,23 @@ a {
 }
 
 /*
-  ROW 5 - FEATURE FIRST ON SMALL SCREENS, BALANCED ON DESKTOP
+  ROW 5 — grid-template-areas: flanked feature layout with breakpoint reorder
   ----------------------------------------------------------------------------
-  grid-template-areas:
-  - In the old flexbox version, the middle card was moved with `order`.
-  - In Grid, the layout can be remapped by changing area names instead.
-  - This is cleaner because the visual hierarchy lives in the grid map itself.
+  BEYOND-LECTURE PROPERTIES USED HERE: grid-template-areas, grid-area
+  (see Row 2 comment for full MDN references)
+
+  WHY NAMED AREAS HERE:
+  This row has a strong visual hierarchy: a central featured card (Dromaeosaurs)
+  flanked by two supporting cards. At desktop the map is "left feature feature right"
+  — the feature card spans two columns in the middle.
+
+  BREAKPOINT REORDERING WITHOUT `order`:
+  - Mobile: feature card appears first ("feature" / "left" / "right") so the
+    most important content leads on small screens.
+  - Desktop: feature moves to the center ("left feature feature right").
+  In the old flexbox version this required the `order` property. With named
+  areas, the visual position is controlled entirely by rewriting the map string.
+  The HTML source order stays unchanged.
 */
 .row--fifth {
   grid-template-columns: 1fr;
@@ -430,23 +627,37 @@ a {
 }
 
 /*
-  ROW 6 - THUMBNAIL GALLERY
+  ROW 6 — repeat(auto-fit, minmax()) for a self-adjusting thumbnail gallery
   ----------------------------------------------------------------------------
-  grid-auto-flow:
-  - The gallery is a repeating collection of thumbnails.New items can be 
-    inserted without updating a named template map.
-  - The browser can place items in sequence while the template tracks resize.
+  BEYOND-LECTURE PROPERTIES USED HERE:
 
-  Additional Grid values used here:
-  - `repeat(auto-fit, minmax(...))` is useful beyond the lecture baseline.
-  - `auto-fit` collapses unused tracks and `minmax()` keeps thumbnails from
-    shrinking too far.
+  1. repeat(auto-fit, minmax(140px, 1fr))
+     - `repeat()` generates multiple track definitions without writing them out
+       individually.
+     - `auto-fit` fills the row with as many tracks as fit, then collapses any
+       empty tracks so filled tracks can expand to use the remaining space.
+     - Contrast with `auto-fill`: `auto-fill` keeps empty tracks at their
+       minimum size rather than collapsing them, which can leave gaps.
+       `auto-fit` is the right choice here because we want thumbnails to
+       stretch and fill the row rather than leaving blank space at the end.
+     - `minmax(140px, 1fr)` means each thumbnail column is at least 140px wide
+       but can grow to an equal share of the available space.
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/repeat
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/minmax
 
-  MDN note about dense packing:
-  - MDN explains that `dense` may backfill earlier holes and can make items look
-    out of order.
-  - This gallery intentionally keeps the normal sparse behavior so source order
-    and reading order stay aligned.
+  2. grid-auto-flow: row (explicit, for clarity)
+     - Items fill left-to-right, wrapping to new rows as needed.
+     - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow
+
+  WHY AUTO-PLACEMENT HERE (not named areas):
+  The gallery is a scalable collection of thumbnails. New items can be added
+  without updating any named template map — the browser places them in sequence
+  and the track count adjusts automatically.
+
+  NOTE ON dense PACKING:
+  `grid-auto-flow: dense` would backfill earlier holes if items had varying
+  spans, but it can make items appear out of source order. This gallery keeps
+  the default sparse behavior so visual order matches reading order.
 */
 .gallery-shell {
   padding-bottom: 1.25rem;
@@ -463,6 +674,9 @@ a {
 .thumb {
   text-decoration: none;
   color: inherit;
+  overflow: hidden;
+  border-radius: 12px;
+  animation: fadeIn 0.6s ease both;
 }
 
 .thumb img {
@@ -471,6 +685,11 @@ a {
   object-fit: cover;
   border-radius: 12px;
   margin-bottom: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.thumb:hover img {
+  transform: scale(1.04);
 }
 
 .thumb span {
@@ -479,12 +698,16 @@ a {
 }
 
 /*
-  FOOTER / BIBLIOGRAPHY
+  FOOTER / BIBLIOGRAPHY — grid-template-areas: three semantic zones
   ----------------------------------------------------------------------------
-  The footer uses `grid-template-areas` because it contains three distinct
-  semantic pieces: a title, an explanatory note, and a source list.
-  This is more intentional than auto-flow and keeps the footer easy to remap at
-  larger breakpoints.
+  BEYOND-LECTURE PROPERTIES USED HERE: grid-template-areas, grid-area
+  (see Row 2 comment for full MDN references)
+
+  WHY NAMED AREAS HERE:
+  The footer has three distinct semantic pieces — a title, an explanatory note,
+  and a source list. Named areas make each zone explicit and easy to remap.
+  At desktop the layout becomes a 1fr + 2fr two-column block with the note and
+  source list side by side, achieved purely by changing the area map string.
 */
 .footer-grid {
   display: grid;
