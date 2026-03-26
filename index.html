@@ -15,15 +15,14 @@
 
     Grid strategy used in this file:
     1) Hero strip, Row 1, and the thumbnail gallery use auto-placement.
-       - Their content is repetitive, so the browser can place the items for us.
-       - That makes them good places to demonstrate `grid-auto-flow`.
+       - Their content is repetitive, so the browser can place the items automatically
+       
 
     2) Rows 2, 3, 4, 5, and the bibliography footer use named layout maps.
-       - These sections have more intentional composition and hierarchy.
-       - That makes them better candidates for `grid-template-areas`.
+       - These sections have more intentional composition and hierarchy through `grid-template-areas`.
 
     3) The content topic stays focused on theropods, early birds, and other
-       Mesozoic fliers. Some aesthetic mods were done as well, beyond changing to Grid
+       Mesozoic fliers. Some aesthetic mods were done as well, beyond changing to Grid, using CSS interactivity and animations
   -->
 
   <div class="wrapper">
@@ -92,14 +91,18 @@
         <article class="card card--highlight">
           <h2>Arcticodactylus</h2>
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfrwSUc6HOOaybEKPgp_xbxekxZH3voeSQRZZZMHjZDxMMIEp0fNuY2nKJWsACkCWSehpFqaN4sP6xOB-o_LhFpLkeaZrBdo1idMtRWd4A&s=10" alt="Illustration of Arcticodactylus.">
-          <p>Pterosaurs are not dinosaurs, but they matter here because they show that Mesozoic skies were already crowded with flight experiments.</p>
+          <p>Pterosaurs are not dinosaurs, but they matter here because they show that Mesozoic skies were already crowded with flight experiments. The proto-feathers and
+            fur-like coating on some of them are an example of convergent evolution at play.
+          </p>
           <p><a href="https://www.instagram.com/p/CIqTHZ4luwd/" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
 
         <article class="card card--neutral">
           <h2>Avicranium</h2>
           <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" alt="Illustration of Avicranium.">
-          <p>Odd skull form and uncertain relationships make this a useful example for talking about convergence and the limits of reconstruction.</p>
+          <p>Odd skull form and uncertain relationships make this a useful example for talking about convergence and the limits of reconstruction. 
+            It turns out, it's not enough to 'think like a bird' in order to be classified as a bird. More importantly, the egg came long before the chicken.
+          </p>
           <p><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0IaQOrkrh4wv7RioI7PekLLOK6mMOeT_MLhpImlgkaSXsFStj7miEaBI5LWuArKAnBAf_V-xdasiD7wiUaTHU6vFFcrnBPSNl5MS4FVqoO4xbjNrg5y6oERjPha83DHq1GId3XK0hTYBD/s1600/Avicranium_renestoi-novataxa_2017-Pritchard_et_Nesbitt_paleoArt-%2540clepsydrops_Matt_Celeskey.jpg" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
       </section>
@@ -136,8 +139,14 @@
         <article class="card card--soft row3-left">
           <h2>Triassic Snapshot</h2>
           <img src="https://cdn.britannica.com/46/136146-050-AC38F468/Distribution-landmasses-regions-seas-ocean-basins-locations.jpg" alt="Map showing Triassic landmasses and seas.">
-          <p>Context card for continents, climate, and the meaning of “early” in a fossil record that is incomplete and unevenly preserved.</p>
+          <img src="https://physci.mesacc.edu/Geology/Leighty/GLG102IN/GLG102IN_Lab12_TriassicAndJurassicGeology/GLG102IN_Lab12_Fig02B_ICSGeologicTimeChart202412_TriassicJurassic_364x480.jpg" alt="Closer look at Triassic into Jurassic periods.">
+          <img src="https://images.newscientist.com/wp-content/uploads/2021/03/24145608/the_triassic.jpg?width=1674" alt="Example of dinosaurs during the Triassic-Jurassic">
+          <img src="https://emilywilloughby.com/gallery-data/images/dinosaur-classification-simplified.png" alt="Lizard-hipped versus Bird-hipped dinosaurs">
+          
+          <p>The context for continents, climate, and the meaning of “early” in a fossil record that is incomplete and unevenly preserved. The Mesozoic still has many unanswered questions.</p>
           <p><a href="https://www.britannica.com/science/Triassic-Period" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
+
+
         </article>
 
         <article class="card card--feature row3-right">
@@ -158,7 +167,7 @@
         <article class="card card--wide row4-main">
           <h2>Mesozoic Timeline</h2>
           <img src="https://earthhow.com/wp-content/uploads/2018/08/Mesozoic-Era-Timeline-Dark-678x378.png" alt="Graphic of the Mesozoic era timeline.">
-          <p>Full-width callout space for a large chronology panel. This section works well as a pacing break between the upper survey cards and the lower feature cards.</p>
+          <p>A narrative of the rise, then fall, of the Age of Reptiles. One group dominated the Mesozoic, but would almost disappear upon the Cretaceous Mass Extinction. All but one group...</p>
           <p><a href="https://earthhow.com/mesozoic-era/" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
       </section>
@@ -180,14 +189,18 @@
         <article class="card card--deep row5-center">
           <h2>Featured: Dromaeosaurs</h2>
           <img src="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" alt="Illustration of a dromaeosaur.">
-          <p>Central feature area for a bigger image and a longer summary. It gives the lower half of the page a visual anchor and lets the evolutionary story feel less list-like.</p>
+          <p>Weird but succesfu - a variation on a theme for theropods and their cousins. As more information is found by paleontologists and biologists, we learn that the dinosaurs were
+            more vibrant and full of muscle, feathers, and proto-fur than originally hypothesized. 
+          </p>
           <p><a href="https://media.australian.museum/media/dd/images/Some_image.width-1200.fc2c400.jpg" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
 
         <article class="card card--highlight row5-right">
           <h2>Pterosaur Giants</h2>
           <img src="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" alt="Illustration of Quetzalcoatlus.">
-          <p>Large azhdarchids are a useful comparison point: they dominated the air late in the Mesozoic without being birds and without being dinosaurs.</p>
+          <p>Large azhdarchids are a useful comparison point: they dominated the air late in the Mesozoic without being birds and without being dinosaurs. The special group had powerful pectoral muscles and specialized
+            membrane-wings that would be somewhere between bird and bat anatomy.
+          </p>
           <p><a href="https://pteros-img.imgix.net/quetzalcoatlus_joschua-knueppe.png?ixlib=js-2.3.2&w=1200&s=19804516105ccb3cc9e7ac1977894318" target="_blank" rel="noopener noreferrer">Read more &gt;&gt;</a></p>
         </article>
       </section>
@@ -201,7 +214,9 @@
       <section class="row row--sixth" aria-label="Feathered flyer gallery">
         <article class="card card--gallery gallery-shell">
           <h2>Gallery: Feathered Flyers</h2>
-          <p>Extra image strip for examples that do not need their own large article card. The layout is scalable, so more thumbnails can be added without rebuilding the section.</p>
+          <p>More discoveries are made every day, across almost every country. China, North America, and Europe scientists uncover more mysteries while answering questions. Feathered
+            flyers could range from the Monstrous to the familiar, small sized friends. Adaptions could range from blending in with the environment, or standing out to make their presence known. 
+          </p>
 
           <div class="thumbs" aria-label="Theropod and pterosaur gallery thumbnails">
             <a class="thumb" href="https://www.sciencenews.org/wp-content/uploads/sites/2/2020/07/071620_cg_microraptor_feat.jpg" target="_blank" rel="noopener noreferrer">
@@ -269,6 +284,11 @@
         <li><strong>Sinosauropteryx</strong> — <a href="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" title="https://252mya.com/cdn/shop/products/1000px_sinosauropteryx-prima2_julio-lacerda.jpg?v=1615507585&width=1000" target="_blank" rel="noopener noreferrer">252mya.com</a></li>
         <li><strong>Yi qi</strong> — <a href="https://www.nytimes.com/2020/10/22/science/jurassic-dinosaur-yi-qi-flight.html" title="https://www.nytimes.com/2020/10/22/science/jurassic-dinosaur-yi-qi-flight.html" target="_blank" rel="noopener noreferrer">nytimes.com</a></li>
         <li><strong>Anurognathids</strong> — <a href="https://www.iflscience.com/meet-the-anurognathidae-tiny-bat-like-ptersosaurs-with-huge-eyes-76830" title="https://www.iflscience.com/meet-the-anurognathidae-tiny-bat-like-ptersosaurs-with-huge-eyes-76830" target="_blank" rel="noopener noreferrer">iflscience.com</a></li>
+        <li><strong>Triassic Breakdown</strong> — <a href="https://physci.mesacc.edu/Geology/Leighty/GLG102IN/GLG102IN_Lab12_TriassicAndJurassicGeology/GLG102IN_Lab12_Fig02B_ICSGeologicTimeChart202412_TriassicJurassic_364x480.jpg" title="https://physci.mesacc.edu/Geology/Leighty/GLG102IN/GLG102IN_Lab12_TriassicAndJurassicGeology/GLG102IN_Lab12_TriassicAndJurassicGeology2.html" target="_blank" rel="noopener noreferrer">physci.mesacc.edu/</a></li>
+        <li><strong>Dinosaurs of the Mesozoic</strong> — <a href="https://images.newscientist.com/wp-content/uploads/2021/03/24145608/the_triassic.jpg?width=1674" title="https://www.newscientist.com/definition/triassic-period/" target="_blank" rel="noopener noreferrer">newsscientist.com</a></li>
+         <li><strong>Samples of Bird-hipped and Lizard-hipped dinosaurs</strong> — <a href="https://emilywilloughby.com/gallery-data/images/dinosaur-classification-simplified.png" title="https://emilywilloughby.com/art/gallery/diagrams/dinosaur-classification-simplified" target="_blank" rel="noopener noreferrer">emilywilloughby.com/art/gallery</a></li>
+
+      
       </ol>
     </footer>
   </div>

@@ -9,7 +9,7 @@
     the lecture examples so the project demonstrates new Grid behavior.
 
   MDN references:
-  - Grid property reference:
+  - Grid property reference in general:
     https://developer.mozilla.org/en-US/docs/Web/CSS/grid
   - grid-auto-flow:
     https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow
@@ -74,7 +74,7 @@ html {
 *::after {
   box-sizing: inherit;
 }
-
+/*the colors were changed to make it pop more this time*/
 :root {
   --ink: #010101;
   --paper: #fefefe;
@@ -109,6 +109,10 @@ h3,
 p {
   margin-top: 0;
 }
+h1 {
+  color: #35166e;
+
+}
 
 h2 {
   font-size: 1.2rem;
@@ -134,8 +138,7 @@ a {
 /*
   :focus-visible — keyboard-only focus styles
   - Applies the outline only when the element is focused via keyboard navigation,
-    not on mouse click. This keeps the UI clean for mouse users while remaining
-    fully accessible for keyboard users.
+    not on mouse click. 
   - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
 */
 a:focus-visible,
@@ -348,9 +351,7 @@ a:focus-visible,
      - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/minmax
 
   Auto-placement benefits:
-  The six tiles are purely decorative and visually identical in structure.
-  They do not need unique named positions — source order is the correct order.
-  Auto-placement keeps the CSS shorter and makes adding/removing tiles trivial.
+  The six tiles are decorative and visually identical in structure. Auto-placement keeps the CSS short
 */
 .site-header {
   margin-bottom: 1.25rem;
@@ -412,10 +413,10 @@ a:focus-visible,
   place-content: end start
   - `place-content` is a shorthand for two Grid (and Flexbox) alignment
     properties written together: `align-content` and `justify-content`.
-  - Syntax: place-content: <align-content> <justify-content>
+  - place-content: <align-content> <justify-content>
   - `end` (align-content) pushes the content block to the bottom of the grid.
   - `start` (justify-content) aligns the content block to the left.
-  - Result: the hero text group (eyebrow + title + tagline) is anchored to the
+  - the hero text group (eyebrow + title + tagline) is anchored to the
     bottom-left corner of the overlay, which is a common editorial layout for
     hero banners.
   - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/place-content
@@ -446,7 +447,7 @@ a:focus-visible,
 
 .hero-title {
   margin-bottom: 0;
-  color: var(--paper);
+  color: var(--emerald);
   font-size: 2rem;
   line-height: 1.05;
   animation: fadeSlideUp 0.6s ease both;
@@ -455,7 +456,7 @@ a:focus-visible,
 .hero-tagline {
   max-width: 42rem;
   margin-bottom: 0;
-  color: var(--paper);
+  color: var(--emerald);
   font-size: 1.05rem;
   animation: fadeSlideUp 0.6s ease 0.15s both;
 }
@@ -470,8 +471,7 @@ a:focus-visible,
   - Controls how the auto-placement algorithm fills the grid.
   - The default value is `row`, meaning items fill each row left-to-right and
     the browser creates new rows as needed.
-  - Explicitly setting it here documents the intent: these four cards are peers
-    with no hierarchy, so source order is the correct visual order.
+  - these four cards are peers with no hierarchy, so source order is the correct visual order.
   - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow
 
   benefits of auto-placement:
@@ -572,7 +572,6 @@ a:focus-visible,
   properties: grid-template-areas, grid-area
   (see Row 2 comment for full MDN references)
 
-  WHY NAMED AREAS HERE:
   A single named area ("timeline") keeps the lower half of the page using one
   consistent Grid language. The layout reads as a grid map rather than a
   one-off `width: 100%` rule, and it can be remapped at any breakpoint without
@@ -590,15 +589,14 @@ a:focus-visible,
 /*
   ROW 5 — grid-template-areas: flanked feature layout with breakpoint reorder
   ----------------------------------------------------------------------------
-  BEYOND-LECTURE PROPERTIES USED HERE: grid-template-areas, grid-area
+  new features: grid-template-areas, grid-area
   (see Row 2 comment for full MDN references)
 
-  WHY NAMED AREAS HERE:
   This row has a strong visual hierarchy: a central featured card (Dromaeosaurs)
   flanked by two supporting cards. At desktop the map is "left feature feature right"
   — the feature card spans two columns in the middle.
 
-  BREAKPOINT REORDERING WITHOUT `order`:
+  reordering without `order`:
   - Mobile: feature card appears first ("feature" / "left" / "right") so the
     most important content leads on small screens.
   - Desktop: feature moves to the center ("left feature feature right").
@@ -629,7 +627,7 @@ a:focus-visible,
 /*
   ROW 6 — repeat(auto-fit, minmax()) for a self-adjusting thumbnail gallery
   ----------------------------------------------------------------------------
-  BEYOND-LECTURE PROPERTIES USED HERE:
+  new features:
 
   1. repeat(auto-fit, minmax(140px, 1fr))
      - `repeat()` generates multiple track definitions without writing them out
@@ -649,12 +647,12 @@ a:focus-visible,
      - Items fill left-to-right, wrapping to new rows as needed.
      - MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow
 
-  WHY AUTO-PLACEMENT HERE (not named areas):
+  auto-placement instead of names:
   The gallery is a scalable collection of thumbnails. New items can be added
   without updating any named template map — the browser places them in sequence
   and the track count adjusts automatically.
 
-  NOTE ON dense PACKING:
+  dense packing:
   `grid-auto-flow: dense` would backfill earlier holes if items had varying
   spans, but it can make items appear out of source order. This gallery keeps
   the default sparse behavior so visual order matches reading order.
@@ -700,10 +698,10 @@ a:focus-visible,
 /*
   FOOTER / BIBLIOGRAPHY — grid-template-areas: three semantic zones
   ----------------------------------------------------------------------------
-  BEYOND-LECTURE PROPERTIES USED HERE: grid-template-areas, grid-area
+  new features: grid-template-areas, grid-area
   (see Row 2 comment for full MDN references)
 
-  WHY NAMED AREAS HERE:
+  named areas:
   The footer has three distinct semantic pieces — a title, an explanatory note,
   and a source list. Named areas make each zone explicit and easy to remap.
   At desktop the layout becomes a 1fr + 2fr two-column block with the note and
